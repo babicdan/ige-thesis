@@ -25,11 +25,11 @@ public record TriCoords(int x, int y) implements Coordinate<TriCoords> {
         if(!ROTATIONS.contains(degrees)) throw new IllegalArgumentException("Unexpected degree value: " + degrees);
         return switch (degrees) {
             case 0 -> this;
-            case 60 -> this; // TODO
-            case 120 -> this;
-            case 180 -> this;
-            case 240 -> this;
-            case 300 -> this;
+            case 60 -> new TriCoords(x - y, x);
+            case 120 -> new TriCoords(-y, x - y);
+            case 180 -> new TriCoords(-x, -y);
+            case 240 -> new TriCoords(-x + y, -x);
+            case 300 -> new TriCoords(y, -x + y);
             default -> throw new IllegalStateException("Unexpected degree value: " + degrees + ", mismatch in available rotations.");
         };
     }
@@ -41,6 +41,7 @@ public record TriCoords(int x, int y) implements Coordinate<TriCoords> {
 
     @Override
     public int compareTo(TriCoords o) {
-        return 0;
+        int compX = Integer.compare(x, o.x);
+        return compX == 0 ? Integer.compare(y, o.y) : compX;
     }
 }

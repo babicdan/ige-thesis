@@ -1,8 +1,9 @@
-package models.view;
+package models.ruleset.view;
 
 
 import models.Robot;
 import models.coordinate.Coordinate;
+import models.ruleset.RobotMove;
 
 import java.util.*;
 import java.util.List;
@@ -63,6 +64,20 @@ public class RobotView<C extends Coordinate<C>> implements Comparable<RobotView<
         return min;
     }
 
+    public RobotMove<C> transformMove(RobotMove<C> move) {
+        if(mirrored)
+            return move.rotate(this.rotation).mirror();
+        else
+            return move.rotate(rotation);
+    }
+
+    public RobotMove<C> inverseTransformMove(RobotMove<C> move) {
+        if(mirrored)
+            return move.rotate(-this.rotation).mirror();
+        else
+            return move.rotate(-rotation);
+    }
+
     @Override
     public int compareTo(RobotView<C> o) {
         var i1 = view.entrySet().iterator();
@@ -83,9 +98,21 @@ public class RobotView<C extends Coordinate<C>> implements Comparable<RobotView<
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        RobotView<?> robotView = (RobotView<?>) o;
+        return Objects.equals(view, robotView.view);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(view);
+    }
+
+    @Override
     public String toString() {
         return "RobotView{" +
-                "view=" + view +
+                "view=" + view + '\n' +
                 ", rotation=" + rotation +
                 ", mirrored=" + mirrored +
                 '}';

@@ -1,4 +1,4 @@
-package models.view;
+package models.ruleset.view;
 
 import models.Robot;
 import models.coordinate.SquareCoords;
@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class SquareRobotView extends RobotView<SquareCoords> {
-    private static final List<SquareCoords> NEIGHBOURS_EXAMPLE = new ArrayList<>(List.of(
+    private static final List<SquareCoords> NEIGHBOURS = new ArrayList<>(List.of(
             new SquareCoords(0, 0),
             new SquareCoords(1, 0),
             new SquareCoords(0, 1),
@@ -18,6 +18,6 @@ public class SquareRobotView extends RobotView<SquareCoords> {
     ));
 
     public SquareRobotView(SquareCoords pos, Function<SquareCoords, Optional<Robot>> grid) {
-        super(pos, grid, NEIGHBOURS_EXAMPLE);
+        super(pos, grid, NEIGHBOURS);
     }
 }
