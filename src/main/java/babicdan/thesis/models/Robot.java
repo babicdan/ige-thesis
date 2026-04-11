@@ -1,4 +1,4 @@
-package models;
+package babicdan.thesis.models;
 
 public record Robot(int color) implements Comparable<Robot> {
     @Override

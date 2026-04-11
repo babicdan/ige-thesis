@@ -1,4 +1,4 @@
-package models.coordinate;
+package babicdan.thesis.models.coordinate;
 
 import java.util.List;
 
@@ -10,4 +10,5 @@ public interface Coordinate<C> extends Comparable<C> {
     C subtract(C other);
     C rotate(int degrees);
     C mirror();
+    ScreenCoordinate getScreenCoordinate();
 }

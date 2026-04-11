@@ -1,9 +1,9 @@
-package models.ruleset.view;
+package babicdan.thesis.models.ruleset.view;
 
 
-import models.Robot;
-import models.coordinate.Coordinate;
-import models.ruleset.RobotMove;
+import babicdan.thesis.models.Robot;
+import babicdan.thesis.models.coordinate.Coordinate;
+import babicdan.thesis.models.ruleset.RobotPosition;
 
 import java.util.*;
 import java.util.List;
@@ -64,16 +64,16 @@ public class RobotView<C extends Coordinate<C>> implements Comparable<RobotView<
         return min;
     }
 
-    public RobotMove<C> transformMove(RobotMove<C> move) {
+    public RobotPosition<C> transformMove(RobotPosition<C> move) {
         if(mirrored)
             return move.rotate(this.rotation).mirror();
         else
             return move.rotate(rotation);
     }
 
-    public RobotMove<C> inverseTransformMove(RobotMove<C> move) {
+    public RobotPosition<C> inverseTransformMove(RobotPosition<C> move) {
         if(mirrored)
-            return move.rotate(-this.rotation).mirror();
+            return move.mirror().rotate(-this.rotation);
         else
             return move.rotate(-rotation);
     }
