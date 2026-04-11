@@ -16,6 +16,10 @@ public class Ruleset<C extends Coordinate<C>> {
         rules.put(normal, normal.transformMove(move));
     }
 
+    public List<Map.Entry<RobotView<C>, RobotPosition<C>>> getRules() {
+        return rules.entrySet().stream().toList();
+    }
+
     public List<RobotPosition<C>> getMoves(RobotView<C> view) {
         List<RobotView<C>> normalViews = view.normalize();
         if(!rules.containsKey(normalViews.getFirst())) return List.of();

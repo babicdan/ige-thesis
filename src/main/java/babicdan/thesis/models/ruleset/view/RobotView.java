@@ -30,6 +30,10 @@ public class RobotView<C extends Coordinate<C>> implements Comparable<RobotView<
         }
     }
 
+    public List<Map.Entry<C, Robot>> getView() {
+        return view.entrySet().stream().toList();
+    }
+
     public RobotView<C> rotate(int degrees) {
         SortedMap<C, Robot> resView = new TreeMap<>();
         for(var pair : view.entrySet()) {

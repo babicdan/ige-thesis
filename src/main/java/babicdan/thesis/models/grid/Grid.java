@@ -34,6 +34,10 @@ public class Grid<C extends Coordinate<C>> {
         grid.put(pos, r);
     }
 
+    public Ruleset<C> getRuleset() {
+        return ruleset;
+    }
+
     public void addRule(RobotView<C> view, RobotPosition<C> move) {
         ruleset.addRule(view, move);
     }
