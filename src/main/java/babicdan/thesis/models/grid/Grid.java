@@ -23,11 +23,11 @@ public class Grid<C extends Coordinate<C>> {
     }
 
     public List<RobotPosition<C>> getRobots() {
-        return grid.entrySet().stream().map((e) -> new RobotPosition<C>(e.getKey(), e.getValue())).collect(Collectors.toList());
+        return grid.entrySet().stream().map((e) -> new RobotPosition<>(e.getKey(), e.getValue())).collect(Collectors.toList());
     }
 
     public RobotView<C> getView(C pos) {
-        return new RobotView<C>(pos, this::get, neighbours);
+        return new RobotView<>(pos, this::get, neighbours);
     }
 
     public void addRobot(C pos, Robot r) {

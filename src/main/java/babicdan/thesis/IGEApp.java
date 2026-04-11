@@ -1,5 +1,6 @@
 package babicdan.thesis;
 
+import babicdan.thesis.models.coordinate.ScreenCoordinate;
 import babicdan.thesis.models.coordinate.TriCoordinate;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -9,10 +10,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import babicdan.thesis.models.Robot;
-import babicdan.thesis.models.coordinate.SquareCoordinate;
 import babicdan.thesis.models.grid.Grid;
 import babicdan.thesis.models.ruleset.RobotPosition;
-import babicdan.thesis.models.ruleset.view.SquareRobotView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,13 +20,15 @@ import java.util.Map;
 public class IGEApp extends Application {
     private Stage stage;
     private Grid<TriCoordinate> grid;
-    private Map<Robot, Color> colorMap = new HashMap<>(Map.of(
+    private final Map<Robot, Color> colorMap = new HashMap<>(Map.of(
             new Robot(0), Color.GREEN,
             new Robot(1), Color.BLUE
     ));
+    private ScreenCoordinate offset = new ScreenCoordinate(0, 0);
+    private ScreenCoordinate previous = new ScreenCoordinate(0, 0);
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         this.stage = stage;
 
         Pane base = new Pane();
@@ -64,9 +65,19 @@ public class IGEApp extends Application {
 
         draw(canvas);
 
+
+        canvas.setOnMousePressed((e) -> {
+            previous = new ScreenCoordinate(e.getX() - offset.x(), e.getY() - offset.y());
+        });
+
         canvas.setOnMouseClicked((e) -> {
-//            IO.println(grid.toString());
+            if(!e.isStillSincePress()) return;
             grid.step();
+            draw(canvas);
+        });
+
+        canvas.setOnMouseDragged((e) -> {
+            offset = new ScreenCoordinate(e.getX() - previous.x(), e.getY() - previous.y());
             draw(canvas);
         });
     }
@@ -77,7 +88,7 @@ public class IGEApp extends Application {
         gc.clearRect(0, 0, c.getWidth(), c.getHeight());
         for(var r : robots) {
             gc.setFill(colorMap.getOrDefault(r.color(), Color.GREY));
-            var pos = r.position().getScreenCoordinate().scale(20).offset(c.getWidth()/2, c.getHeight()/2);
+            var pos = r.position().getScreenCoordinate().scale(20).offset(c.getWidth()/2 + offset.x(), c.getHeight()/2 + offset.y());
             gc.fillOval(pos.x(), pos.y(), 16, 16);
         }
     }
