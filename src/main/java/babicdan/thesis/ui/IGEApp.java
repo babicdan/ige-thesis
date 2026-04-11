@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -93,6 +94,8 @@ public class IGEApp extends Application {
         grid.addRule(grid.getView(beacon1), new RobotPosition<>(new TriCoordinate(1, 0)));
         grid.addRule(grid.getView(beacon3), new RobotPosition<>(new TriCoordinate(-1, 0)));
 
+        grid.saveGrid();
+
         draw(canvas);
 
 
@@ -102,7 +105,10 @@ public class IGEApp extends Application {
 
         canvas.setOnMouseClicked((e) -> {
             if(!e.isStillSincePress()) return;
-            grid.step();
+            if(e.getButton() == MouseButton.SECONDARY)
+                grid.reloadGrid();
+            else
+                grid.step();
             draw(canvas);
         });
 

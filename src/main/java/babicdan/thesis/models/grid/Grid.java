@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 public class Grid<C extends Coordinate<C>> {
     protected Map<C, Robot> grid = new HashMap<>();
+    protected Map<C, Robot> savedGrid = new HashMap<>();
     protected final Ruleset<C> ruleset = new Ruleset<>();
     protected List<C> neighbours;
 
@@ -55,6 +56,14 @@ public class Grid<C extends Coordinate<C>> {
             }
         }
         grid = newGrid;
+    }
+
+    public void saveGrid() {
+        savedGrid = new HashMap<>(grid);
+    }
+
+    public void reloadGrid() {
+        grid = new HashMap<>(savedGrid);
     }
 
     @Override
