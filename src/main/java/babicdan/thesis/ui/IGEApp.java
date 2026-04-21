@@ -24,8 +24,9 @@ public class IGEApp extends Application {
             new Robot(0), Color.BLACK,
             new Robot(1), Color.BLUE
     ));
-    private ScreenCoordinate offset = new ScreenCoordinate(0, 0);
-    private ScreenCoordinate previous = new ScreenCoordinate(0, 0);
+    private ScreenCoordinate cameraPosition = new ScreenCoordinate(0, 0);
+    private ScreenCoordinate dragStartPosition = new ScreenCoordinate(0, 0);
+    private double zoom = 30;
 
     @Override
     public void start(Stage stage) throws InterruptedException {
@@ -92,15 +93,18 @@ public class IGEApp extends Application {
         grid.addRule(grid.getView(shipSideRight), new RobotPosition<>(new TriCoordinate(0, 1)));
 
         grid.addRule(grid.getView(beacon1), new RobotPosition<>(new TriCoordinate(1, 0)));
+//        grid.addRule(grid.getView(beacon2), new RobotPosition<>(new TriCoordinate(1, 0)));
         grid.addRule(grid.getView(beacon3), new RobotPosition<>(new TriCoordinate(-1, 0)));
 
         grid.saveGrid();
+
+        cameraPosition = new ScreenCoordinate(-canvas.getWidth()/2, -canvas.getHeight()/2);
 
         draw(canvas);
 
 
         canvas.setOnMousePressed((e) -> {
-            previous = new ScreenCoordinate(e.getX() - offset.x(), e.getY() - offset.y());
+            dragStartPosition = cameraPosition.offset(e.getX(), e.getY());
         });
 
         canvas.setOnMouseClicked((e) -> {
@@ -113,12 +117,22 @@ public class IGEApp extends Application {
         });
 
         canvas.setOnMouseDragged((e) -> {
-            offset = new ScreenCoordinate(e.getX() - previous.x(), e.getY() - previous.y());
+            cameraPosition = dragStartPosition.offset(-e.getX(), -e.getY());
             draw(canvas);
         });
 
         canvas.setOnScroll((e) -> {
-            grid.step();
+            if(e.isControlDown()) {
+                double newZoom = -100/(e.getDeltaY() / 100 - 100/zoom);
+                newZoom = Math.clamp(newZoom, 6, 250);
+                ScreenCoordinate pointStart = cameraPosition.offset(e.getX(), e.getY());
+                ScreenCoordinate pointEnd = pointStart.scale(newZoom/zoom);
+                cameraPosition = pointEnd.offset(-e.getX(), -e.getY());
+                zoom = newZoom;
+                dragStartPosition = cameraPosition.offset(e.getX(), e.getY());
+            }
+            else
+                grid.step();
             draw(canvas);
         });
     }
@@ -129,8 +143,12 @@ public class IGEApp extends Application {
         gc.clearRect(0, 0, c.getWidth(), c.getHeight());
         for(var r : robots) {
             gc.setFill(colorMap.getOrDefault(r.color(), Color.GREY));
-            var pos = r.position().getScreenCoordinate().scale(20).offset(c.getWidth()/2 + offset.x(), c.getHeight()/2 + offset.y());
-            gc.fillOval(pos.x(), pos.y(), 16, 16);
+            var pos = new ScreenCoordinate(r.position()).scale(zoom).offset(-cameraPosition.x(), -cameraPosition.y());
+            gc.fillOval(pos.x(), pos.y(), zoom*0.8, zoom*0.8);
         }
+    }
+
+    private void drawTriangleGrid(Canvas c) {
+
     }
 }

@@ -43,19 +43,24 @@ public class Grid<C extends Coordinate<C>> {
         ruleset.addRule(view, move);
     }
 
-    public void step() {
+    public boolean step() {
         Map<C, Robot> newGrid = new HashMap<>();
         for(var pair : grid.entrySet()) {
-            List<RobotPosition<C>> moves = ruleset.getMoves(new RobotView<>(pair.getKey(), this::get, neighbours));
-            if(moves.isEmpty())
-                newGrid.put(pair.getKey(), pair.getValue());
+            ArrayList<RobotPosition<C>> moves = new ArrayList<>(ruleset.getMoves(new RobotView<>(pair.getKey(), this::get, neighbours)));
+            if(moves.isEmpty()) {
+                if (newGrid.put(pair.getKey(), pair.getValue()) != null)
+                    return false;
+            }
             else {
+                Collections.shuffle(moves);
                 var move = moves.getFirst();
-                newGrid.put(pair.getKey().add(move.position()), move.color());
-                // TODO: Collision detection (vertex and edge)
+                if(newGrid.put(pair.getKey().add(move.position()), move.color()) != null)
+                    return false;
+                // TODO: Collision detection (edge)
             }
         }
         grid = newGrid;
+        return true;
     }
 
     public void saveGrid() {

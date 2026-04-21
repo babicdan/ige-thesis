@@ -40,11 +40,6 @@ public record TriCoordinate(int x, int y) implements Coordinate<TriCoordinate> {
     }
 
     @Override
-    public ScreenCoordinate getScreenCoordinate() {
-        return new ScreenCoordinate(x - y * Math.sin(Math.PI/6), - y * Math.cos(Math.PI/6));
-    }
-
-    @Override
     public int compareTo(TriCoordinate o) {
         int compX = Integer.compare(x, o.x);
         return compX == 0 ? Integer.compare(y, o.y) : compX;

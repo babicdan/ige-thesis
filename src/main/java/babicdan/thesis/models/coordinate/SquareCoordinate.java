@@ -34,11 +34,6 @@ public record SquareCoordinate(int x, int y) implements Coordinate<SquareCoordin
     }
 
     @Override
-    public ScreenCoordinate getScreenCoordinate() {
-        return new ScreenCoordinate(x, -y);
-    }
-
-    @Override
     public List<Integer> getRotations() {
         return ROTATIONS;
     }

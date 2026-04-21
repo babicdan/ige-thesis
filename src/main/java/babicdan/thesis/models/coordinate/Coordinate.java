@@ -10,5 +10,4 @@ public interface Coordinate<C> extends Comparable<C> {
     C subtract(C other);
     C rotate(int degrees);
     C mirror();
-    ScreenCoordinate getScreenCoordinate();
 }
