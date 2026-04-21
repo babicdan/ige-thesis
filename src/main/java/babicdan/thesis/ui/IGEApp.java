@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -42,7 +43,6 @@ public class IGEApp extends Application {
         final Canvas canvas = new Canvas(s.getWidth(), s.getHeight());
         canvas.widthProperty().bind(s.widthProperty());
         canvas.heightProperty().bind(s.heightProperty());
-
         base.getChildren().add(canvas);
 
         List<TriCoordinate> n = List.of(
@@ -111,6 +111,10 @@ public class IGEApp extends Application {
             if(!e.isStillSincePress()) return;
             if(e.getButton() == MouseButton.SECONDARY)
                 grid.reloadGrid();
+            else if(e.getButton() == MouseButton.MIDDLE) {
+                cameraPosition = new ScreenCoordinate(-canvas.getWidth()/2, -canvas.getHeight()/2);
+                zoom = 30;
+            }
             else
                 grid.step();
             draw(canvas);
@@ -135,20 +139,71 @@ public class IGEApp extends Application {
                 grid.step();
             draw(canvas);
         });
+
+//        canvas.setOnMouseMoved((e) -> {
+//            var closestTri = cameraPosition.offset(e.getX(), e.getY()).scale(1/zoom).getTriCoordinate();
+//            GraphicsContext gc = canvas.getGraphicsContext2D();
+//            gc.setFill(Color.RED);
+//            var pos = new ScreenCoordinate(closestTri).scale(zoom).offset(cameraPosition.scale(-1));
+//            gc.fillOval(pos.x()-zoom*0.1, pos.y()-zoom*0.1, zoom*0.2, zoom*0.2);
+//        });
+
+//        canvas.setOnMouseMoved((e) -> {
+//            GraphicsContext gc = canvas.getGraphicsContext2D();
+//            var closest = cameraPosition.offset(e.getX(), e.getY()).scale(1/zoom).getTriCoordinate();
+//            int v = closest.x() + closest.y();
+//            gc.setFill(switch (Math.floorMod(v,4)) {
+//                case 0 -> Color.RED;
+//                case 1 -> Color.ORANGE;
+//                case 2 -> Color.YELLOW;
+//                case 3 -> Color.CORAL;
+//                default -> Color.GRAY;
+//            });
+//            var pos = new ScreenCoordinate(closest).scale(zoom).offset(cameraPosition.scale(-1));
+//            gc.fillOval(e.getX()-zoom*0.05, e.getY()-zoom*0.05, zoom*0.1, zoom*0.1);
+//        });
     }
 
     private void draw(Canvas c) {
         GraphicsContext gc = c.getGraphicsContext2D();
         var robots = grid.getRobots();
         gc.clearRect(0, 0, c.getWidth(), c.getHeight());
+        drawTriangleGrid(c);
         for(var r : robots) {
             gc.setFill(colorMap.getOrDefault(r.color(), Color.GREY));
-            var pos = new ScreenCoordinate(r.position()).scale(zoom).offset(-cameraPosition.x(), -cameraPosition.y());
-            gc.fillOval(pos.x(), pos.y(), zoom*0.8, zoom*0.8);
+            var pos = new ScreenCoordinate(r.position()).scale(zoom).offset(cameraPosition.scale(-1));
+            gc.fillOval(pos.x()-zoom*0.4, pos.y()-zoom*0.4, zoom*0.8, zoom*0.8);
         }
     }
 
     private void drawTriangleGrid(Canvas c) {
+        var topLeft = cameraPosition.scale(1/zoom).getTriCoordinate();
+        var topRight = cameraPosition.offset(c.getWidth(), 0).scale(1/zoom).getTriCoordinate();
+        var bottomLeft = cameraPosition.offset(0, c.getHeight()).scale(1/zoom).getTriCoordinate();
+        var bottomRight = cameraPosition.offset(c.getWidth(), c.getHeight()).scale(1/zoom).getTriCoordinate();
+
+        GraphicsContext gc = c.getGraphicsContext2D();
+        gc.setStroke(Color.GRAY);
+        gc.setLineWidth(zoom/40);
+
+        for(int i = bottomLeft.x()-1; i <= topRight.x()+1; i++) {
+            var start = new ScreenCoordinate(new TriCoordinate(i, bottomLeft.y()-1)).scale(zoom).offset(cameraPosition.scale(-1));
+            var end = new ScreenCoordinate(new TriCoordinate(i, topLeft.y()+1)).scale(zoom).offset(cameraPosition.scale(-1));
+            gc.strokeLine(start.x(), start.y(), end.x(), end.y());
+        }
+
+        for(int i = bottomRight.x()+1; i >= topLeft.x()-topLeft.y()+bottomLeft.y()-1; i--) {
+            var start = new ScreenCoordinate(new TriCoordinate(i, bottomLeft.y()-1)).scale(zoom).offset(cameraPosition.scale(-1));
+            var end = new ScreenCoordinate(new TriCoordinate(i+topLeft.y()-bottomLeft.y()+2, topLeft.y()+1)).scale(zoom).offset(cameraPosition.scale(-1));
+            gc.strokeLine(start.x(), start.y(), end.x(), end.y());
+        }
+
+
+        for(int i = bottomLeft.y()-1; i <= topLeft.y()+1; i++) {
+            var start = new ScreenCoordinate(new TriCoordinate(bottomLeft.x()-1, i)).scale(zoom).offset(cameraPosition.scale(-1));
+            var end = new ScreenCoordinate(new TriCoordinate(topRight.x()+1, i)).scale(zoom).offset(cameraPosition.scale(-1));
+            gc.strokeLine(start.x(), start.y(), end.x(), end.y());
+        }
 
     }
 }

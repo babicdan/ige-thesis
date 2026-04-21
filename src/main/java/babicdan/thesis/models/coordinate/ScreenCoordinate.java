@@ -16,9 +16,13 @@ public record ScreenCoordinate(double x, double y) {
         return new ScreenCoordinate(x + dx, y + dy);
     }
 
+    public ScreenCoordinate offset(ScreenCoordinate d) {
+        return new ScreenCoordinate(x + d.x, y + d.y);
+    }
+
     public TriCoordinate getTriCoordinate() {
         double b = - y / Math.cos(Math.PI/6);
-        double a = x + y * Math.sin(Math.PI/6);
+        double a = x + b * Math.sin(Math.PI/6);
         return new TriCoordinate((int) Math.round(a), (int) Math.round(b));
     }
 
