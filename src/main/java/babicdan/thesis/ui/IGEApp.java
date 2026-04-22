@@ -63,9 +63,9 @@ public class IGEApp extends Application {
 
         s.setOnKeyPressed((k) -> {
             switch (k.getCode()) {
-                case KeyCode.DIGIT1 -> grid = AlgorithmHelper.algorithmTriOne();
-                case KeyCode.DIGIT2 -> grid = AlgorithmHelper.algorithmTriTwo();
-                case KeyCode.DIGIT3 -> grid = AlgorithmHelper.algorithmTriThree();
+                case KeyCode.DIGIT1, KeyCode.NUMPAD1 -> grid = AlgorithmHelper.algorithmTriOne();
+                case KeyCode.DIGIT2, KeyCode.NUMPAD2 -> grid = AlgorithmHelper.algorithmTriTwo();
+                case KeyCode.DIGIT3, KeyCode.NUMPAD3 -> grid = AlgorithmHelper.algorithmTriThree();
                 case KeyCode.R -> grid.reloadGrid();
             }
             draw(canvas);
