@@ -1,9 +1,8 @@
-package babicdan.thesis.models.ruleset.view;
+package babicdan.thesis.models.ruleset;
 
 
 import babicdan.thesis.models.Robot;
 import babicdan.thesis.models.coordinate.Coordinate;
-import babicdan.thesis.models.ruleset.RobotPosition;
 
 import java.util.*;
 import java.util.List;
@@ -22,9 +21,9 @@ public class RobotView<C extends Coordinate<C>> implements Comparable<RobotView<
         this.mirrored = mirrored;
     }
 
-    public RobotView(C pos, Function<C, Optional<Robot>> grid, List<C> neighbours) {
+    public RobotView(C pos, Function<C, Optional<Robot>> grid, List<C> visibleNodes) {
         getRotations = pos::getRotations;
-        for(var n : neighbours) {
+        for(var n : visibleNodes) {
             Optional<Robot> r = grid.apply(pos.add(n));
             r.ifPresent(robot -> view.put(n, robot));
         }

@@ -1,9 +1,19 @@
 package babicdan.thesis.models.coordinate;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public record TriCoordinate(int x, int y) implements Coordinate<TriCoordinate> {
     private static final List<Integer> ROTATIONS = List.of(0, 60, 120, 180, 240, 300);
+    private static final List<TriCoordinate> NEIGHBOURS = List.of(
+            new TriCoordinate(0, 0),
+            new TriCoordinate(1, 0),
+            new TriCoordinate(1, 1),
+            new TriCoordinate(0, 1),
+            new TriCoordinate(-1, 0),
+            new TriCoordinate(-1, -1),
+            new TriCoordinate(0, -1)
+    );
     @Override
     public List<Integer> getRotations() {
         return ROTATIONS;
@@ -37,6 +47,11 @@ public record TriCoordinate(int x, int y) implements Coordinate<TriCoordinate> {
     @Override
     public TriCoordinate mirror() {
         return new TriCoordinate(y, x);
+    }
+
+    @Override
+    public List<TriCoordinate> neighbours() {
+        return NEIGHBOURS.stream().map(this::add).collect(Collectors.toList());
     }
 
     @Override

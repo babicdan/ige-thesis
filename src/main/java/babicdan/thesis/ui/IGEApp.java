@@ -6,7 +6,6 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -45,15 +44,7 @@ public class IGEApp extends Application {
         canvas.heightProperty().bind(s.heightProperty());
         base.getChildren().add(canvas);
 
-        List<TriCoordinate> n = List.of(
-                new TriCoordinate(0, 0),
-                new TriCoordinate(1, 0),
-                new TriCoordinate(1, 1),
-                new TriCoordinate(0, 1),
-                new TriCoordinate(-1, 0),
-                new TriCoordinate(-1, -1),
-                new TriCoordinate(0, -1)
-        );
+        List<TriCoordinate> n = new TriCoordinate(0, 0).neighbours();
 
         HashSet<TriCoordinate> nset = new HashSet<>();
 

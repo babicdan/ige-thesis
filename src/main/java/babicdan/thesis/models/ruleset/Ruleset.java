@@ -1,7 +1,6 @@
 package babicdan.thesis.models.ruleset;
 
 import babicdan.thesis.models.coordinate.Coordinate;
-import babicdan.thesis.models.ruleset.view.RobotView;
 
 import java.util.HashMap;
 import java.util.HashSet;
