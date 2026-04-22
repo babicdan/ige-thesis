@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -30,9 +31,9 @@ public class IGEApp extends Application {
 
     private final Map<Robot, Color> colorMap = new HashMap<>(Map.of(
             new Robot('R'), Color.BLACK,
-            new Robot('L'), Color.BLUE,
-            new Robot('F'), Color.GREEN,
-            new Robot('B'), Color.RED
+            new Robot('L'), Color.DODGERBLUE,
+            new Robot('F'), Color.LAWNGREEN,
+            new Robot('B'), Color.CRIMSON
     ));
     private ScreenCoordinate cameraPosition = new ScreenCoordinate(0, 0);
     private ScreenCoordinate dragStartPosition = new ScreenCoordinate(0, 0);
@@ -56,22 +57,27 @@ public class IGEApp extends Application {
 
         cameraPosition = new ScreenCoordinate(-canvas.getWidth()/2, -canvas.getHeight()/2);
 
-//        grid = AlgorithmHelper.algorithmTriOne();
-//        grid = AlgorithmHelper.algorithmTriTwo();
-        grid = AlgorithmHelper.algorithmTriThree();
+        grid = AlgorithmHelper.algorithmTriOne();
 
         draw(canvas);
 
+        s.setOnKeyPressed((k) -> {
+            switch (k.getCode()) {
+                case KeyCode.DIGIT1 -> grid = AlgorithmHelper.algorithmTriOne();
+                case KeyCode.DIGIT2 -> grid = AlgorithmHelper.algorithmTriTwo();
+                case KeyCode.DIGIT3 -> grid = AlgorithmHelper.algorithmTriThree();
+                case KeyCode.R -> grid.reloadGrid();
+            }
+            draw(canvas);
+        });
 
-        canvas.setOnMousePressed((e) -> {
+        s.setOnMousePressed((e) -> {
             dragStartPosition = cameraPosition.offset(e.getX(), e.getY());
         });
 
-        canvas.setOnMouseClicked((e) -> {
+        s.setOnMouseClicked((e) -> {
             if(!e.isStillSincePress()) return;
-            if(e.getButton() == MouseButton.SECONDARY)
-                grid.reloadGrid();
-            else if(e.getButton() == MouseButton.MIDDLE) {
+            if(e.getButton() == MouseButton.SECONDARY) {
                 cameraPosition = new ScreenCoordinate(-canvas.getWidth()/2, -canvas.getHeight()/2);
                 zoom = DEFAULT_ZOOM;
             }
@@ -80,12 +86,12 @@ public class IGEApp extends Application {
             draw(canvas);
         });
 
-        canvas.setOnMouseDragged((e) -> {
+        s.setOnMouseDragged((e) -> {
             cameraPosition = dragStartPosition.offset(-e.getX(), -e.getY());
             draw(canvas);
         });
 
-        canvas.setOnScroll((e) -> {
+        s.setOnScroll((e) -> {
             if(e.isControlDown()) {
                 double newZoom = Math.exp(Math.log(zoom) + e.getDeltaY() * ZOOM_FACTOR);
                 newZoom = Math.clamp(newZoom, ZOOM_MIN, ZOOM_MAX);
@@ -100,7 +106,7 @@ public class IGEApp extends Application {
             draw(canvas);
         });
 
-//        canvas.setOnMouseMoved((e) -> {
+//        s.setOnMouseMoved((e) -> {
 //            var closestTri = cameraPosition.offset(e.getX(), e.getY()).scale(1/zoom).getTriCoordinate();
 //            GraphicsContext gc = canvas.getGraphicsContext2D();
 //            gc.setFill(Color.WHITE);
@@ -112,7 +118,7 @@ public class IGEApp extends Application {
 //            gc.fillOval(pos.x()-zoom*0.1, pos.y()-zoom*0.1, zoom*0.2, zoom*0.2);
 //        });
 
-//        canvas.setOnMouseMoved((e) -> {
+//        s.setOnMouseMoved((e) -> {
 //            GraphicsContext gc = canvas.getGraphicsContext2D();
 //            var closest = cameraPosition.offset(e.getX(), e.getY()).scale(1/zoom).getTriCoordinate();
 //            int v = closest.x() + closest.y();
