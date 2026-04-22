@@ -29,8 +29,10 @@ public class IGEApp extends Application {
     private Grid<TriCoordinate> grid;
 
     private final Map<Robot, Color> colorMap = new HashMap<>(Map.of(
-            new Robot(0), Color.BLACK,
-            new Robot(1), Color.BLUE
+            new Robot('R'), Color.BLACK,
+            new Robot('L'), Color.BLUE,
+            new Robot('F'), Color.GREEN,
+            new Robot('B'), Color.RED
     ));
     private ScreenCoordinate cameraPosition = new ScreenCoordinate(0, 0);
     private ScreenCoordinate dragStartPosition = new ScreenCoordinate(0, 0);
@@ -54,7 +56,9 @@ public class IGEApp extends Application {
 
         cameraPosition = new ScreenCoordinate(-canvas.getWidth()/2, -canvas.getHeight()/2);
 
-        grid = AlgorithmHelper.algorithmTriOne();
+//        grid = AlgorithmHelper.algorithmTriOne();
+//        grid = AlgorithmHelper.algorithmTriTwo();
+        grid = AlgorithmHelper.algorithmTriThree();
 
         draw(canvas);
 
@@ -99,8 +103,12 @@ public class IGEApp extends Application {
 //        canvas.setOnMouseMoved((e) -> {
 //            var closestTri = cameraPosition.offset(e.getX(), e.getY()).scale(1/zoom).getTriCoordinate();
 //            GraphicsContext gc = canvas.getGraphicsContext2D();
-//            gc.setFill(Color.RED);
+//            gc.setFill(Color.WHITE);
+//            gc.fillRect(0, 0, 200, 30);
+//            gc.setFill(Color.BLACK);
+//            gc.fillText(closestTri.toString(), 10, 20);
 //            var pos = new ScreenCoordinate(closestTri).scale(zoom).offset(cameraPosition.scale(-1));
+//            gc.setFill(Color.MEDIUMVIOLETRED);
 //            gc.fillOval(pos.x()-zoom*0.1, pos.y()-zoom*0.1, zoom*0.2, zoom*0.2);
 //        });
 
