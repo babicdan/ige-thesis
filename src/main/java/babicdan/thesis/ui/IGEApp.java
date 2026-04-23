@@ -43,22 +43,26 @@ public class IGEApp extends Application {
     public void start(Stage stage) throws InterruptedException {
         this.stage = stage;
 
-        Pane base = new Pane();
-        Scene s = new Scene(base, 1200, 900, Color.WHITE);
+        Pane pane = new Pane();
+        Scene s = new Scene(pane, 1200, 900, Color.WHITE);
 
         stage.setTitle("IGE Problem Visualisation");
         stage.setScene(s);
         stage.show();
 
+        final Canvas gridCanvas = new Canvas(s.getWidth(), s.getHeight());
         final Canvas canvas = new Canvas(s.getWidth(), s.getHeight());
-        canvas.widthProperty().bind(s.widthProperty());
-        canvas.heightProperty().bind(s.heightProperty());
-        base.getChildren().add(canvas);
+        for(var c : List.of(gridCanvas, canvas)) {
+            c.widthProperty().bind(s.widthProperty());
+            c.heightProperty().bind(s.heightProperty());
+            pane.getChildren().add(c);
+        }
 
         cameraPosition = new ScreenCoordinate(-canvas.getWidth()/2, -canvas.getHeight()/2);
 
         grid = AlgorithmHelper.algorithmTriOne();
 
+        drawTriangleGrid(gridCanvas);
         draw(canvas);
 
         s.setOnKeyPressed((k) -> {
@@ -80,6 +84,7 @@ public class IGEApp extends Application {
             if(e.getButton() == MouseButton.SECONDARY) {
                 cameraPosition = new ScreenCoordinate(-canvas.getWidth()/2, -canvas.getHeight()/2);
                 zoom = DEFAULT_ZOOM;
+                drawTriangleGrid(gridCanvas);
             }
             else
                 grid.step();
@@ -88,6 +93,7 @@ public class IGEApp extends Application {
 
         s.setOnMouseDragged((e) -> {
             cameraPosition = dragStartPosition.offset(-e.getX(), -e.getY());
+            drawTriangleGrid(gridCanvas);
             draw(canvas);
         });
 
@@ -100,6 +106,7 @@ public class IGEApp extends Application {
                 cameraPosition = pointEnd.offset(-e.getX(), -e.getY());
                 zoom = newZoom;
                 dragStartPosition = cameraPosition.offset(e.getX(), e.getY());
+                drawTriangleGrid(gridCanvas);
             }
             else
                 grid.step();
@@ -138,7 +145,6 @@ public class IGEApp extends Application {
         GraphicsContext gc = c.getGraphicsContext2D();
         var robots = grid.getRobots();
         gc.clearRect(0, 0, c.getWidth(), c.getHeight());
-        drawTriangleGrid(c);
         for(var r : robots) {
             gc.setFill(colorMap.getOrDefault(r.color(), Color.GREY));
             var pos = new ScreenCoordinate(r.position()).scale(zoom).offset(cameraPosition.scale(-1));
@@ -154,32 +160,38 @@ public class IGEApp extends Application {
         var bottomRight = cameraPosition.offset(c.getWidth(), c.getHeight()).scale(1/zoom).getTriCoordinate();
 
         GraphicsContext gc = c.getGraphicsContext2D();
+        gc.clearRect(0, 0, c.getWidth(), c.getHeight());
         gc.setStroke(Color.GRAY);
         gc.setLineWidth(zoom/40);
 
-        for(int i = bottomLeft.x()-1; i <= topRight.x()+1; i++) {
+        int bottom = bottomLeft.y() - 1;
+        int top = topLeft.y() + 1;
+
+        for (int i = bottomLeft.x() - 1; i <= topRight.x() + 1; i++) {
             var start = new ScreenCoordinate(
-                    new TriCoordinate(i, bottomLeft.y()-1)).scale(zoom).offset(cameraPosition.scale(-1));
+                    new TriCoordinate(i, bottom)).scale(zoom).offset(cameraPosition.scale(-1));
             var end = new ScreenCoordinate(
-                    new TriCoordinate(i, topLeft.y()+1)).scale(zoom).offset(cameraPosition.scale(-1));
+                    new TriCoordinate(i, top)).scale(zoom).offset(cameraPosition.scale(-1));
             gc.strokeLine(start.x(), start.y(), end.x(), end.y());
         }
 
-        for(int i = bottomRight.x()+1; i >= topLeft.x()-topLeft.y()+bottomLeft.y()-1; i--) {
+        for (int i = bottomRight.x() + 1; i >= topLeft.x() - top + bottom; i--) {
             var start = new ScreenCoordinate(
-                    new TriCoordinate(i, bottomLeft.y()-1)).scale(zoom).offset(cameraPosition.scale(-1));
+                    new TriCoordinate(i, bottom)).scale(zoom).offset(cameraPosition.scale(-1));
             var end = new ScreenCoordinate(
-                    new TriCoordinate(i+topLeft.y()-bottomLeft.y()+2, topLeft.y()+1)).scale(zoom).offset(cameraPosition.scale(-1));
+                    new TriCoordinate(i + top - bottom, top)).scale(zoom).offset(cameraPosition.scale(-1));
             gc.strokeLine(start.x(), start.y(), end.x(), end.y());
         }
 
-
-        for(int i = bottomLeft.y()-1; i <= topLeft.y()+1; i++) {
+        int left = bottomLeft.x() - 1;
+        int right = topRight.x() + 1;
+        for (int i = bottomLeft.y() - 1; i <= topLeft.y() + 1; i++) {
             var start = new ScreenCoordinate(
-                    new TriCoordinate(bottomLeft.x()-1, i)).scale(zoom).offset(cameraPosition.scale(-1));
+                    new TriCoordinate(left, i)).scale(zoom).offset(cameraPosition.scale(-1));
             var end = new ScreenCoordinate(
-                    new TriCoordinate(topRight.x()+1, i)).scale(zoom).offset(cameraPosition.scale(-1));
+                    new TriCoordinate(right, i)).scale(zoom).offset(cameraPosition.scale(-1));
             gc.strokeLine(start.x(), start.y(), end.x(), end.y());
         }
+
     }
 }
