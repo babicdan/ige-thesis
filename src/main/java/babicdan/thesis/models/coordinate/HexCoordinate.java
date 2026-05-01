@@ -23,13 +23,18 @@ public record HexCoordinate(int x, int y, boolean top) implements Coordinate<Hex
     }
 
     @Override
-    public HexCoordinate subtract(HexCoordinate other) {
-        return null;
-    }
-
-    @Override
     public HexCoordinate rotate(int degrees) {
-        return null;
+        degrees = Math.floorMod(degrees, 360);
+        if(!ROTATIONS.contains(degrees)) throw new IllegalArgumentException("Unexpected degree value: " + degrees);
+        return switch (degrees) {
+            case 0 -> this;
+            case 60 -> new HexCoordinate(0, 0, !top);
+            case 120 -> new HexCoordinate(0, 0, top);
+            case 180 -> new HexCoordinate(0, 0, !top);
+            case 240 -> new HexCoordinate(0, 0, top);
+            case 300 -> new HexCoordinate(0, 0, !top);
+            default -> throw new IllegalStateException("Unexpected degree value: " + degrees + ", mismatch in available rotations.");
+        };
     }
 
     @Override
@@ -39,11 +44,15 @@ public record HexCoordinate(int x, int y, boolean top) implements Coordinate<Hex
 
     @Override
     public List<HexCoordinate> neighbours() {
-        return List.of();
+        return NEIGHBOURS;
     }
 
     @Override
     public int compareTo(HexCoordinate o) {
-        return 0;
+        int compX = Integer.compare(x, o.x);
+        if(compX != 0) return compX;
+        int compY = Integer.compare(y, o.y);
+        if(compY != 0) return compY;
+        return Integer.compare(top?1:0, o.top?1:0);
     }
 }

@@ -1,4 +1,7 @@
-package babicdan.thesis.models.coordinate;
+package babicdan.thesis.ui;
+
+import babicdan.thesis.models.coordinate.SquareCoordinate;
+import babicdan.thesis.models.coordinate.TriCoordinate;
 
 public record ScreenCoordinate(double x, double y) {
     public ScreenCoordinate(TriCoordinate c) {

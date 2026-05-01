@@ -143,7 +143,7 @@ public class IGEApp extends Application {
         gc.clearRect(0, 0, c.getWidth(), c.getHeight());
         drawTriangleGrid(c);
         for(var r : robots) {
-            gc.setFill(colorMap.getOrDefault(r.color(), Color.GREY));
+            gc.setFill(colorMap.getOrDefault(r.robot(), Color.GREY));
             var pos = new ScreenCoordinate(r.position()).scale(zoom).offset(cameraPosition.scale(-1));
             gc.fillOval(pos.x()-zoom*ROBOT_SIZE/2, pos.y()-zoom*ROBOT_SIZE/2,
                     zoom*ROBOT_SIZE, zoom*ROBOT_SIZE);
@@ -184,5 +184,25 @@ public class IGEApp extends Application {
                     new TriCoordinate(topRight.x()+1, i)).scale(zoom).offset(cameraPosition.scale(-1));
             gc.strokeLine(start.x(), start.y(), end.x(), end.y());
         }
+    }
+
+    private void copyRobotsAsTikz() {
+        String node = "\\node at (%d, %d) {%c};\n";
+        String move = "\\draw (%d, %d) -- +(%d, %d);\n";
+        StringBuilder result = new StringBuilder();
+        final Clipboard c = Clipboard.getSystemClipboard();
+        final ClipboardContent cc = new ClipboardContent();
+        for(var r : grid.getRobots()) {
+            result.append(String.format(node, r.position().x(), r.position().y(), r.robot().color()));
+        }
+        result.append("\n");
+        for(var r : grid.getMoves().entrySet()) {
+            for(var dir : r.getValue()) {
+                result.append(String.format(move, r.getKey().x(), r.getKey().y(), dir.position().x(), dir.position().y()));
+            }
+        }
+
+        cc.putString(result.toString());
+        c.setContent(cc);
     }
 }

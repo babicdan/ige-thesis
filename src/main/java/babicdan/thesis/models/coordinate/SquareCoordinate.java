@@ -18,7 +18,6 @@ public record SquareCoordinate(int x, int y) implements Coordinate<SquareCoordin
         return new SquareCoordinate(x + other.x, y + other.y);
     }
 
-    @Override
     public SquareCoordinate subtract(SquareCoordinate other) {
         return new SquareCoordinate(x - other.x, y - other.y);
     }

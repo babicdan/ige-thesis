@@ -24,7 +24,6 @@ public record TriCoordinate(int x, int y) implements Coordinate<TriCoordinate> {
         return new TriCoordinate(x + other.x, y + other.y);
     }
 
-    @Override
     public TriCoordinate subtract(TriCoordinate other) {
         return new TriCoordinate(x - other.x, y - other.y);
     }

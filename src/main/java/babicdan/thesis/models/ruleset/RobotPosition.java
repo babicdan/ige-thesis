@@ -3,16 +3,16 @@ package babicdan.thesis.models.ruleset;
 import babicdan.thesis.models.Robot;
 import babicdan.thesis.models.coordinate.Coordinate;
 
-public record RobotPosition<C extends Coordinate<C>>(C position, Robot color) {
+public record RobotPosition<C extends Coordinate<C>>(C position, Robot robot) {
     public RobotPosition(C position) {
         this(position, new Robot('R'));
     }
 
     public RobotPosition<C> rotate(int degrees) {
-        return new RobotPosition<>(position.rotate(degrees), color);
+        return new RobotPosition<>(position.rotate(degrees), robot);
     }
 
     public RobotPosition<C> mirror() {
-        return new RobotPosition<>(position.mirror(), color);
+        return new RobotPosition<>(position.mirror(), robot);
     }
 }
