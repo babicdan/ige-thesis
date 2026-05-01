@@ -54,8 +54,8 @@ public class AlgorithmHelper {
 //        grid.addRule(grid.getView(beacon2), new RobotPosition<>(new TriCoordinate(1, 0)));
         grid.addRule(grid.getView(beacon3), new RobotPosition<>(new TriCoordinate(-1, 0)));
 
-        grid.saveGrid();
 
+        grid.saveGrid();
         return grid;
     }
 
@@ -139,8 +139,58 @@ public class AlgorithmHelper {
         grid.addRule(grid.getView(beacon1), new RobotPosition<>(new TriCoordinate(0, -1), new Robot('B')));
 
 
+        grid.reloadGrid();
+        return grid;
+    }
+
+    public static Grid<TriCoordinate> algorithmTriThreeAlt() {
+        Grid<TriCoordinate> grid = new Grid<>(new TriCoordinate(0, 0).neighbours());
+
+        var shipFront = new TriCoordinate(0, 0);
+        var shipBack = new TriCoordinate(-1, 0);
+
+        var beacon1 = new TriCoordinate(-1, -1);
+        var beacon2 = new TriCoordinate(1, 2);
+        var beacon3 = new TriCoordinate(-3, 0);
+
+        grid.addRobot(shipFront, new Robot('L'));
+        grid.addRobot(shipBack, new Robot('F'));
+
+        grid.saveGrid();
+
+        grid.addRule(grid.getView(shipFront), new RobotPosition<>(new TriCoordinate(1, 0), new Robot('L')));
+        grid.addRule(grid.getView(shipBack), new RobotPosition<>(new TriCoordinate(1, 0), new Robot('F')));
+
+        grid.addRobot(beacon1.add(new TriCoordinate(1, 0)), new Robot('B'));
+
+
+        grid.addRule(grid.getView(shipFront), new RobotPosition<>(new TriCoordinate(1, 0), new Robot('L')));
+
+        grid.step();
+
+        grid.addRule(grid.getView(shipFront.add(new TriCoordinate(1, 0))),
+                new RobotPosition<>(new TriCoordinate(0, 1), new Robot('L')));
+        grid.addRule(grid.getView(shipBack.add(new TriCoordinate(1, 0))),
+                new RobotPosition<>(new TriCoordinate(1, 0), new Robot('F')));
+
+        grid.addRule(grid.getView(beacon1.add(new TriCoordinate(1, 0))), new RobotPosition<>(new TriCoordinate(1, 0), new Robot('B')));
+
+        grid.step();
+
+        grid.addRule(grid.getView(shipBack.add(new TriCoordinate(2, 0))),
+                new RobotPosition<>(new TriCoordinate(0, 1), new Robot('F')));
+
+        grid.addRule(grid.getView(beacon1.add(new TriCoordinate(2, 0))),
+                new RobotPosition<>(new TriCoordinate(0, -1), new Robot('B')));
 
         grid.reloadGrid();
+
+        grid.addRobot(beacon1, new Robot('B'));
+        grid.addRobot(beacon2, new Robot('B'));
+        grid.addRobot(beacon3, new Robot('B'));
+
+        grid.saveGrid();
+
         return grid;
     }
 }

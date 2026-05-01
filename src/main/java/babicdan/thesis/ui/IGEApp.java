@@ -1,12 +1,13 @@
 package babicdan.thesis.ui;
 
-import babicdan.thesis.models.coordinate.ScreenCoordinate;
 import babicdan.thesis.models.coordinate.TriCoordinate;
 import babicdan.thesis.models.grid.AlgorithmHelper;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
@@ -66,7 +67,9 @@ public class IGEApp extends Application {
                 case KeyCode.DIGIT1, KeyCode.NUMPAD1 -> grid = AlgorithmHelper.algorithmTriOne();
                 case KeyCode.DIGIT2, KeyCode.NUMPAD2 -> grid = AlgorithmHelper.algorithmTriTwo();
                 case KeyCode.DIGIT3, KeyCode.NUMPAD3 -> grid = AlgorithmHelper.algorithmTriThree();
+                case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> grid = AlgorithmHelper.algorithmTriThreeAlt();
                 case KeyCode.R -> grid.reloadGrid();
+                case KeyCode.C -> copyRobotsAsTikz();
             }
             draw(canvas);
         });
