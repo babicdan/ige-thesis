@@ -10,13 +10,29 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Grid<C extends Coordinate<C>> {
-    protected Map<C, Robot> grid = new HashMap<>();
-    protected Map<C, Robot> savedGrid = new HashMap<>();
-    protected final Ruleset<C> ruleset = new Ruleset<>();
-    protected List<C> inView;
+    private record Edge<C extends Coordinate<C>>(C v, C w) {
+        public Edge(C v, C w) {
+            if(v.compareTo(w) < 0) {
+                this.v = v;
+                this.w = w;
+            }
+            else {
+                this.v = w;
+                this.w = v;
+            }
+        }
+    }
 
-    public Grid(List<C> inView) {
-        this.inView = inView;
+    protected Map<C, Robot> grid = new HashMap<>();
+    protected int round = 0;
+
+    protected List<C> robotView;
+    protected final Ruleset<C> ruleset = new Ruleset<>();
+    protected Map<C, Robot> savedGrid = new HashMap<>();
+    protected int savedRound = 0;
+
+    public Grid(List<C> robotView) {
+        this.robotView = robotView;
     }
 
     public Optional<Robot> get(C pos) {
@@ -28,7 +44,7 @@ public class Grid<C extends Coordinate<C>> {
     }
 
     public RobotView<C> getView(C pos) {
-        return new RobotView<>(pos, this::get, inView);
+        return new RobotView<>(pos, this::get, robotView);
     }
 
     public void addRobot(C pos, Robot r) {
@@ -45,8 +61,9 @@ public class Grid<C extends Coordinate<C>> {
 
     public boolean step() {
         Map<C, Robot> newGrid = new HashMap<>();
+        Set<Edge<C>> usedEdges = new HashSet<>();
         for(var pair : grid.entrySet()) {
-            ArrayList<RobotPosition<C>> moves = new ArrayList<>(ruleset.getMoves(new RobotView<>(pair.getKey(), this::get, inView)));
+            ArrayList<RobotPosition<C>> moves = new ArrayList<>(ruleset.getMoves(new RobotView<>(pair.getKey(), this::get, robotView)));
             if(moves.isEmpty()) {
                 if (newGrid.put(pair.getKey(), pair.getValue()) != null)
                     return false;
@@ -54,21 +71,42 @@ public class Grid<C extends Coordinate<C>> {
             else {
                 Collections.shuffle(moves);
                 var move = moves.getFirst();
-                if(newGrid.put(pair.getKey().add(move.position()), move.color()) != null)
+
+                // New map insertion, vertex collision detection
+                if(newGrid.put(pair.getKey().add(move.position()), move.robot()) != null)
                     return false;
-                // TODO: Collision detection (edge)
+
+                // Edge collision detection
+                if(!usedEdges.add(
+                        new Edge<>(
+                                pair.getKey(), pair.getKey().add(move.position())
+                        )
+                ))
+                    return false;
             }
         }
+        round++;
         grid = newGrid;
         return true;
     }
 
+    public HashMap<C, List<RobotPosition<C>>> getMoves() {
+        HashMap<C, List<RobotPosition<C>>> result = new HashMap<>();
+        for(var pair : grid.entrySet()) {
+            var moves = ruleset.getMoves(new RobotView<>(pair.getKey(), this::get, robotView));
+            result.put(pair.getKey(), moves);
+        }
+        return result;
+    }
+
     public void saveGrid() {
         savedGrid = new HashMap<>(grid);
+        savedRound = round;
     }
 
     public void reloadGrid() {
         grid = new HashMap<>(savedGrid);
+        round = savedRound;
     }
 
     @Override
