@@ -3,6 +3,7 @@ package babicdan.thesis.ui;
 import babicdan.thesis.models.coordinate.HexCoordinate;
 import babicdan.thesis.models.coordinate.TriCoordinate;
 import babicdan.thesis.models.grid.AlgorithmHelper;
+import babicdan.thesis.models.ruleset.RobotPosition;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -29,7 +30,7 @@ public class IGEApp extends Application {
     private static final double ZOOM_MIN = 6;
     private static final double ZOOM_MAX = 300;
 
-    private Grid<TriCoordinate> grid;
+    private Grid<HexCoordinate> grid;
 
     private final Map<Robot, Color> colorMap = new HashMap<>(Map.of(
             new Robot('R'), Color.BLACK,
@@ -59,16 +60,28 @@ public class IGEApp extends Application {
 
         cameraPosition = new ScreenCoordinate(-canvas.getWidth()/2, -canvas.getHeight()/2);
 
-        grid = AlgorithmHelper.algorithmTriOne();
+//        grid = AlgorithmHelper.algorithmTriOne();
+        var front = new HexCoordinate(0,0,false);
+        var back = new HexCoordinate(-1,0,true);
+        grid = new Grid<>(front.neighbours());
+
+
+        grid.addRobot(front, new Robot('L'));
+        grid.addRobot(back, new Robot('F'));
+        grid.addRule(grid.getView(front), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('L')));
+        grid.addRule(grid.getView(back), new RobotPosition<>(new HexCoordinate(-1, 0, true), new Robot('F')));
+
+
+        grid.saveGrid();
 
         draw(canvas);
 
         s.setOnKeyPressed((k) -> {
             switch (k.getCode()) {
-                case KeyCode.DIGIT1, KeyCode.NUMPAD1 -> grid = AlgorithmHelper.algorithmTriOne();
-                case KeyCode.DIGIT2, KeyCode.NUMPAD2 -> grid = AlgorithmHelper.algorithmTriTwo();
-                case KeyCode.DIGIT3, KeyCode.NUMPAD3 -> grid = AlgorithmHelper.algorithmTriThree();
-                case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> grid = AlgorithmHelper.algorithmTriThreeAlt();
+//                case KeyCode.DIGIT1, KeyCode.NUMPAD1 -> grid = AlgorithmHelper.algorithmTriOne();
+//                case KeyCode.DIGIT2, KeyCode.NUMPAD2 -> grid = AlgorithmHelper.algorithmTriTwo();
+//                case KeyCode.DIGIT3, KeyCode.NUMPAD3 -> grid = AlgorithmHelper.algorithmTriThree();
+//                case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> grid = AlgorithmHelper.algorithmTriThreeAlt();
                 case KeyCode.R -> grid.reloadGrid();
                 case KeyCode.C -> copyRobotsAsTikz();
             }
@@ -142,7 +155,8 @@ public class IGEApp extends Application {
         GraphicsContext gc = c.getGraphicsContext2D();
         var robots = grid.getRobots();
         gc.clearRect(0, 0, c.getWidth(), c.getHeight());
-        drawTriangleGrid(c);
+//        drawTriangleGrid(c);
+        drawHexagonalGrid(c);
         for(var r : robots) {
             gc.setFill(colorMap.getOrDefault(r.robot(), Color.GREY));
             var pos = new ScreenCoordinate(r.position()).scale(zoom).offset(cameraPosition.scale(-1));
@@ -188,7 +202,23 @@ public class IGEApp extends Application {
     }
 
     private void drawHexagonalGrid(Canvas c) {
+        GraphicsContext gc = c.getGraphicsContext2D();
+        gc.setStroke(Color.GRAY);
+        gc.setLineWidth(zoom/40);
 
+        var zero = new HexCoordinate(0,0,false);
+
+        for(int i = -20; i <= 20; i++) {
+            for(int j = -20; j <=20; j++) {
+                for(var d : zero.neighbours()) {
+                    var fromHex = new HexCoordinate(i, j, false);
+                    var toHex = fromHex.add(d);
+                    var start = new ScreenCoordinate(fromHex).scale(zoom).offset(cameraPosition.scale(-1));
+                    var end = new ScreenCoordinate(toHex).scale(zoom).offset(cameraPosition.scale(-1));
+                    gc.strokeLine(start.x(), start.y(), end.x(), end.y());
+                }
+            }
+        }
     }
 
     private void copyRobotsAsTikz() {

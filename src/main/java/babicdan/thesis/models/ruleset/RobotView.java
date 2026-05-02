@@ -15,8 +15,8 @@ public class RobotView<C extends Coordinate<C>> implements Comparable<RobotView<
     protected int rotation = 0;
     protected boolean mirrored = false;
 
-    private RobotView(SortedMap<C, Robot> view, int rotation, boolean mirrored) {
-        this.view = view;
+    private RobotView(Map<C, Robot> view, int rotation, boolean mirrored) {
+        this.view = new TreeMap<>(view);
         this.rotation = rotation;
         this.mirrored = mirrored;
     }
