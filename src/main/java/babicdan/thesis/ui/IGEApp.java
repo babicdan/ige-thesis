@@ -215,6 +215,7 @@ public class IGEApp extends Application {
 
     private void drawHexagonalGrid(Canvas c) {
         GraphicsContext gc = c.getGraphicsContext2D();
+        gc.clearRect(0, 0, c.getWidth(), c.getHeight());
         gc.setStroke(Color.GRAY);
         gc.setLineWidth(zoom/40);
 
