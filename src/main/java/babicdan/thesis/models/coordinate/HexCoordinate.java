@@ -28,18 +28,19 @@ public record HexCoordinate(int x, int y, boolean top) implements Coordinate<Hex
         if(!ROTATIONS.contains(degrees)) throw new IllegalArgumentException("Unexpected degree value: " + degrees);
         return switch (degrees) {
             case 0 -> this;
-            case 60 -> new HexCoordinate(0, 0, !top);
-            case 120 -> new HexCoordinate(0, 0, top);
-            case 180 -> new HexCoordinate(0, 0, !top);
-            case 240 -> new HexCoordinate(0, 0, top);
-            case 300 -> new HexCoordinate(0, 0, !top);
+            case 60 -> new HexCoordinate(-y, x + y + n(top), !top);
+            case 120 -> new HexCoordinate(-x - y - n(top), x, top);
+            case 180 -> new HexCoordinate(-x, -y, !top);
+            case 240 -> new HexCoordinate(y, -x - y - n(top), top);
+            case 300 -> new HexCoordinate(x + y + n(top), -x, !top);
             default -> throw new IllegalStateException("Unexpected degree value: " + degrees + ", mismatch in available rotations.");
         };
     }
 
     @Override
     public HexCoordinate mirror() {
-        return new HexCoordinate(-x, -y, !top);
+        // a different option might be HexCoordinate(-x, y, !top);
+        return new HexCoordinate(y, x, top);
     }
 
     @Override
@@ -54,5 +55,9 @@ public record HexCoordinate(int x, int y, boolean top) implements Coordinate<Hex
         int compY = Integer.compare(y, o.y);
         if(compY != 0) return compY;
         return Integer.compare(top?1:0, o.top?1:0);
+    }
+
+    private int n(boolean b) {
+        return b ? 1 : 0;
     }
 }

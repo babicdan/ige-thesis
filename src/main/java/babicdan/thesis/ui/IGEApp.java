@@ -1,5 +1,6 @@
 package babicdan.thesis.ui;
 
+import babicdan.thesis.models.coordinate.HexCoordinate;
 import babicdan.thesis.models.coordinate.TriCoordinate;
 import babicdan.thesis.models.grid.AlgorithmHelper;
 import javafx.application.Application;
@@ -184,6 +185,10 @@ public class IGEApp extends Application {
                     new TriCoordinate(topRight.x()+1, i)).scale(zoom).offset(cameraPosition.scale(-1));
             gc.strokeLine(start.x(), start.y(), end.x(), end.y());
         }
+    }
+
+    private void drawHexagonalGrid(Canvas c) {
+
     }
 
     private void copyRobotsAsTikz() {

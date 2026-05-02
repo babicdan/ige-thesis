@@ -1,5 +1,6 @@
 package babicdan.thesis.ui;
 
+import babicdan.thesis.models.coordinate.HexCoordinate;
 import babicdan.thesis.models.coordinate.SquareCoordinate;
 import babicdan.thesis.models.coordinate.TriCoordinate;
 
@@ -7,8 +8,15 @@ public record ScreenCoordinate(double x, double y) {
     public ScreenCoordinate(TriCoordinate c) {
         this(c.x() - c.y() * Math.sin(Math.PI/6), - c.y() * Math.cos(Math.PI/6));
     }
+
     public ScreenCoordinate(SquareCoordinate c) {
         this(c.x(), -c.y());
+    }
+
+    public ScreenCoordinate(HexCoordinate c) {
+        this(new TriCoordinate(
+                2*c.x() + c.y() + (c.top()?1:0), c.x() + 2*c.y() + (c.top()?1:0)
+        ));
     }
 
     public ScreenCoordinate scale(double factor) {
