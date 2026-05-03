@@ -58,4 +58,5 @@ public record TriCoordinate(int x, int y) implements Coordinate<TriCoordinate> {
         int compX = Integer.compare(x, o.x);
         return compX == 0 ? Integer.compare(y, o.y) : compX;
     }
+
 }

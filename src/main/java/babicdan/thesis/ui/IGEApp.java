@@ -30,7 +30,7 @@ public class IGEApp extends Application {
     private static final double ZOOM_MIN = 6;
     private static final double ZOOM_MAX = 300;
 
-    private Grid<HexCoordinate> grid;
+    private Grid<TriCoordinate> grid;
 
     private final Map<Robot, Color> colorMap = new HashMap<>(Map.of(
             new Robot('R'), Color.BLACK,
@@ -63,29 +63,30 @@ public class IGEApp extends Application {
 
         cameraPosition = new ScreenCoordinate(-canvas.getWidth()/2, -canvas.getHeight()/2);
 
-//        grid = AlgorithmHelper.algorithmTriOne();
-        var front = new HexCoordinate(0,0,false);
-        var back = new HexCoordinate(-1,0,true);
-        grid = new Grid<>(front.neighbours());
-
-
-        grid.addRobot(front, new Robot('L'));
-        grid.addRobot(back, new Robot('F'));
-        grid.addRule(grid.getView(front), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('L')));
-        grid.addRule(grid.getView(back), new RobotPosition<>(new HexCoordinate(-1, 0, true), new Robot('F')));
+        grid = AlgorithmHelper.algorithmTriOne();
+//        var front = new HexCoordinate(0,0,false);
+//        var back = new HexCoordinate(-1,0,true);
+//        grid = new Grid<>(front.neighbours());
+//
+//
+//        grid.addRobot(front, new Robot('L'));
+//        grid.addRobot(back, new Robot('F'));
+//        grid.addRule(grid.getView(front), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('L')));
+//        grid.addRule(grid.getView(back), new RobotPosition<>(new HexCoordinate(-1, 0, true), new Robot('F')));
 
 
         grid.saveGrid();
 
-        drawHexagonalGrid(gridCanvas);
+        drawTriangleGrid(gridCanvas);
+//        drawHexagonalGrid(gridCanvas);
         draw(canvas);
 
         s.setOnKeyPressed((k) -> {
             switch (k.getCode()) {
-//                case KeyCode.DIGIT1, KeyCode.NUMPAD1 -> grid = AlgorithmHelper.algorithmTriOne();
-//                case KeyCode.DIGIT2, KeyCode.NUMPAD2 -> grid = AlgorithmHelper.algorithmTriTwo();
-//                case KeyCode.DIGIT3, KeyCode.NUMPAD3 -> grid = AlgorithmHelper.algorithmTriThree();
-//                case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> grid = AlgorithmHelper.algorithmTriThreeAlt();
+                case KeyCode.DIGIT1, KeyCode.NUMPAD1 -> grid = AlgorithmHelper.algorithmTriOne();
+                case KeyCode.DIGIT2, KeyCode.NUMPAD2 -> grid = AlgorithmHelper.algorithmTriTwo();
+                case KeyCode.DIGIT3, KeyCode.NUMPAD3 -> grid = AlgorithmHelper.algorithmTriThree();
+                case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> grid = AlgorithmHelper.algorithmTriThreeAlt();
                 case KeyCode.R -> grid.reloadGrid();
                 case KeyCode.C -> copyRobotsAsTikz();
             }
@@ -101,7 +102,8 @@ public class IGEApp extends Application {
             if(e.getButton() == MouseButton.SECONDARY) {
                 cameraPosition = new ScreenCoordinate(-canvas.getWidth()/2, -canvas.getHeight()/2);
                 zoom = DEFAULT_ZOOM;
-                drawHexagonalGrid(gridCanvas);
+                drawTriangleGrid(gridCanvas);
+//                drawHexagonalGrid(gridCanvas);
             }
             else
                 grid.step();
@@ -110,7 +112,8 @@ public class IGEApp extends Application {
 
         s.setOnMouseDragged((e) -> {
             cameraPosition = dragStartPosition.offset(-e.getX(), -e.getY());
-            drawHexagonalGrid(gridCanvas);
+            drawTriangleGrid(gridCanvas);
+//            drawHexagonalGrid(gridCanvas);
             draw(canvas);
         });
 
@@ -123,7 +126,8 @@ public class IGEApp extends Application {
                 cameraPosition = pointEnd.offset(-e.getX(), -e.getY());
                 zoom = newZoom;
                 dragStartPosition = cameraPosition.offset(e.getX(), e.getY());
-                drawHexagonalGrid(gridCanvas);
+                drawTriangleGrid(gridCanvas);
+//                drawHexagonalGrid(gridCanvas);
             }
             else
                 grid.step();
@@ -160,10 +164,13 @@ public class IGEApp extends Application {
 
     private void draw(Canvas c) {
         GraphicsContext gc = c.getGraphicsContext2D();
-        var robots = grid.getRobots();
         gc.clearRect(0, 0, c.getWidth(), c.getHeight());
-//        drawTriangleGrid(c);
-        drawHexagonalGrid(c);
+        gc.setFill(Color.WHITE);
+        gc.fillRect(0, 0, 80, 30);
+        gc.setFill(Color.BLACK);
+        gc.fillText("Round " + grid.getRound(), 10, 20);
+
+        var robots = grid.getRobots();
         for(var r : robots) {
             gc.setFill(colorMap.getOrDefault(r.robot(), Color.GREY));
             var pos = new ScreenCoordinate(r.position()).scale(zoom).offset(cameraPosition.scale(-1));

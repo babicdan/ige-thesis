@@ -109,6 +109,10 @@ public class Grid<C extends Coordinate<C>> {
         round = savedRound;
     }
 
+    public int getRound() {
+        return round;
+    }
+
     @Override
     public String toString() {
         return "Grid" + grid;
