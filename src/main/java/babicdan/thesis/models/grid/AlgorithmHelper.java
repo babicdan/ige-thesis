@@ -55,6 +55,9 @@ public class AlgorithmHelper {
         grid.addRule(grid.getView(beacon3), new RobotPosition<>(new TriCoordinate(-1, 0)));
 
 
+        grid.removeRobot(beacon3);
+        grid.addRobot(beacon3.add(new TriCoordinate(-1, 0)), new Robot('R'));
+
         grid.saveGrid();
         return grid;
     }

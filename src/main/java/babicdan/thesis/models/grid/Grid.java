@@ -51,6 +51,10 @@ public class Grid<C extends Coordinate<C>> {
         grid.put(pos, r);
     }
 
+    public boolean removeRobot(C pos) {
+        return grid.remove(pos) != null;
+    }
+
     public Ruleset<C> getRuleset() {
         return ruleset;
     }
