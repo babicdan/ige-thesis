@@ -61,6 +61,7 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>babicdan.thesis/babicdan.thesis.Launcher</mainClass>
+                    <launcher>thesis</launcher>
                 </configuration>
             </plugin>
         </plugins>
