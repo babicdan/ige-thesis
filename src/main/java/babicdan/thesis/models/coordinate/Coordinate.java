@@ -1,5 +1,7 @@
 package babicdan.thesis.models.coordinate;
 
+import babicdan.thesis.ui.ScreenCoordinate;
+
 import java.util.List;
 
 public interface Coordinate<C extends Coordinate<C>> extends Comparable<C> {
@@ -8,4 +10,5 @@ public interface Coordinate<C extends Coordinate<C>> extends Comparable<C> {
     C rotate(int degrees);
     C mirror();
     List<C> neighbours();
+    ScreenCoordinate getScreenCoordinate();
 }

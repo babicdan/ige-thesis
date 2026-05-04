@@ -1,5 +1,7 @@
 package babicdan.thesis.models.coordinate;
 
+import babicdan.thesis.ui.ScreenCoordinate;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +45,11 @@ public record SquareCoordinate(int x, int y) implements Coordinate<SquareCoordin
     @Override
     public List<SquareCoordinate> neighbours() {
         return NEIGHBOURS.stream().map(this::add).collect(Collectors.toList());
+    }
+
+    @Override
+    public ScreenCoordinate getScreenCoordinate() {
+        return new ScreenCoordinate(x, -y);
     }
 
     @Override

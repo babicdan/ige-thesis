@@ -1,6 +1,7 @@
 package babicdan.thesis.models.grid;
 
 import babicdan.thesis.models.Robot;
+import babicdan.thesis.models.coordinate.HexCoordinate;
 import babicdan.thesis.models.coordinate.TriCoordinate;
 import babicdan.thesis.models.ruleset.RobotPosition;
 
@@ -191,6 +192,68 @@ public class AlgorithmHelper {
         grid.addRobot(beacon1, new Robot('B'));
         grid.addRobot(beacon2, new Robot('B'));
         grid.addRobot(beacon3, new Robot('B'));
+
+        grid.saveGrid();
+
+        return grid;
+    }
+
+    public static Grid<HexCoordinate> hexDemoOne() {
+        List<HexCoordinate> n = new HexCoordinate(0, 0, false).neighbours();
+        HashSet<HexCoordinate> nset = new HashSet<>();
+
+        for(var i : n) {
+            for(var j : n) {
+                nset.add(i.add(j));
+            }
+        }
+
+        Grid<HexCoordinate> grid = new Grid<>(new ArrayList<>(nset));
+
+        var front = new HexCoordinate(0,0,false);
+        var middle = new HexCoordinate(0,-1,false);
+        var back = new HexCoordinate(0,-2,true);
+
+        grid.addRobot(front, new Robot('R'));
+        grid.addRobot(middle, new Robot('R'));
+        grid.addRobot(back, new Robot('R'));
+
+        grid.addRule(grid.getView(front), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('R')));
+        grid.addRule(grid.getView(middle), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('R')));
+        grid.addRule(grid.getView(back), new RobotPosition<>(new HexCoordinate(0, -1, true), new Robot('R')));
+
+        grid.saveGrid();
+
+        return grid;
+    }
+
+    public static Grid<HexCoordinate> hexDemoTwo() {
+        List<HexCoordinate> n = new HexCoordinate(0, 0, false).neighbours();
+        HashSet<HexCoordinate> nset = new HashSet<>();
+
+        for(var i : n) {
+            for(var j : n) {
+                nset.add(i.add(j));
+            }
+        }
+
+        Grid<HexCoordinate> grid = new Grid<>(new ArrayList<>(nset));
+
+        var front = new HexCoordinate(0,0,false);
+        var middle = new HexCoordinate(0,-1,true);
+        var back = new HexCoordinate(0,-1,false);
+
+        var beacon = new HexCoordinate(1,2,true);
+
+
+        grid.addRobot(front, new Robot('L'));
+        grid.addRobot(middle, new Robot('F'));
+        grid.addRobot(back, new Robot('F'));
+        grid.addRobot(beacon, new Robot('L'));
+
+        grid.addRule(grid.getView(front), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('L')));
+        grid.addRule(grid.getView(middle), new RobotPosition<>(new HexCoordinate(0, -1, true), new Robot('F')));
+        grid.addRule(grid.getView(back), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('F')));
 
         grid.saveGrid();
 

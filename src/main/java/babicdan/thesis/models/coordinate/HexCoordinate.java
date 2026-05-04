@@ -1,5 +1,7 @@
 package babicdan.thesis.models.coordinate;
 
+import babicdan.thesis.ui.ScreenCoordinate;
+
 import java.util.List;
 
 public record HexCoordinate(int x, int y, boolean top) implements Coordinate<HexCoordinate> {
@@ -46,6 +48,13 @@ public record HexCoordinate(int x, int y, boolean top) implements Coordinate<Hex
     @Override
     public List<HexCoordinate> neighbours() {
         return NEIGHBOURS;
+    }
+
+    @Override
+    public ScreenCoordinate getScreenCoordinate() {
+        return new TriCoordinate(
+                2*x + y + n(top), x + 2*y + n(top)
+        ).getScreenCoordinate();
     }
 
     @Override

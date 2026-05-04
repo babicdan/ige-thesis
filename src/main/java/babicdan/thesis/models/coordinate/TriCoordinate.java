@@ -1,5 +1,7 @@
 package babicdan.thesis.models.coordinate;
 
+import babicdan.thesis.ui.ScreenCoordinate;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +53,11 @@ public record TriCoordinate(int x, int y) implements Coordinate<TriCoordinate> {
     @Override
     public List<TriCoordinate> neighbours() {
         return NEIGHBOURS.stream().map(this::add).collect(Collectors.toList());
+    }
+
+    @Override
+    public ScreenCoordinate getScreenCoordinate() {
+        return new ScreenCoordinate(x - y * Math.sin(Math.PI/6), - y * Math.cos(Math.PI/6));
     }
 
     @Override
