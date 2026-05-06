@@ -111,7 +111,7 @@ public class AlgorithmHelper {
         return grid;
     }
 
-    public static Grid<TriCoordinate> algorithmTriThree() {
+    public static Grid<TriCoordinate> algorithmTriThreeAlt() {
         Grid<TriCoordinate> grid = new Grid<>(new TriCoordinate(0, 0).neighbours());
 
         var shipFront = new TriCoordinate(0, 0);
@@ -147,7 +147,7 @@ public class AlgorithmHelper {
         return grid;
     }
 
-    public static Grid<TriCoordinate> algorithmTriThreeAlt() {
+    public static Grid<TriCoordinate> algorithmTriThree() {
         Grid<TriCoordinate> grid = new Grid<>(new TriCoordinate(0, 0).neighbours());
 
         var shipFront = new TriCoordinate(0, 0);

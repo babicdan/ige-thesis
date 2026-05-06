@@ -4,6 +4,7 @@ import babicdan.thesis.models.coordinate.Coordinate;
 import babicdan.thesis.models.coordinate.HexCoordinate;
 import babicdan.thesis.models.coordinate.TriCoordinate;
 import babicdan.thesis.models.grid.AlgorithmHelper;
+import babicdan.thesis.models.grid.GridType;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -30,15 +31,10 @@ public class IGEApp extends Application {
     private static final double ZOOM_MIN = 6;
     private static final double ZOOM_MAX = 300;
 
-    private enum GridType {
-        TRIANGLE, HEXAGON, SQUARE
-    }
-
     private GridType inUse = GridType.TRIANGLE;
     private Grid<TriCoordinate> triGrid = AlgorithmHelper.algorithmTriOne();
     private Grid<HexCoordinate> hexGrid = AlgorithmHelper.hexDemoTwo();
-    private Grid<?> grid = triGrid;
-
+    private Grid<? extends Coordinate<?>> grid = triGrid;
 
     private final Map<Robot, Color> colorMap = new HashMap<>(Map.of(
             new Robot('R'), Color.BLACK,
@@ -71,19 +67,19 @@ public class IGEApp extends Application {
 
         s.widthProperty().addListener((o) -> {
             drawGrid(gridCanvas);
-            drawRobots(canvas);
+            drawRobots(grid, canvas);
         });
 
         s.heightProperty().addListener((o) -> {
             drawGrid(gridCanvas);
-            drawRobots(canvas);
+            drawRobots(grid, canvas);
         });
 
         cameraPosition = new ScreenCoordinate(-canvas.getWidth()/2, -canvas.getHeight()/2);
 
         drawTriangleGrid(gridCanvas);
 //        drawHexagonalGrid(gridCanvas);
-        drawRobots(canvas);
+        drawRobots(grid, canvas);
 
         s.setOnKeyPressed((k) -> {
             switch (k.getCode()) {
@@ -122,7 +118,7 @@ public class IGEApp extends Application {
                 case KeyCode.SPACE, KeyCode.RIGHT -> grid.step();
             }
             drawGrid(gridCanvas);
-            drawRobots(canvas);
+            drawRobots(grid, canvas);
         });
 
         s.setOnMousePressed((e) -> {
@@ -138,13 +134,13 @@ public class IGEApp extends Application {
             }
             else
                 grid.step();
-            drawRobots(canvas);
+            drawRobots(grid, canvas);
         });
 
         s.setOnMouseDragged((e) -> {
             cameraPosition = dragStartPosition.offset(-e.getX(), -e.getY());
             drawGrid(gridCanvas);
-            drawRobots(canvas);
+            drawRobots(grid, canvas);
         });
 
         s.setOnScroll((e) -> {
@@ -160,7 +156,7 @@ public class IGEApp extends Application {
             }
             else
                 grid.step();
-            drawRobots(canvas);
+            drawRobots(grid, canvas);
         });
 
 //        s.setOnMouseMoved((e) -> {
@@ -189,14 +185,6 @@ public class IGEApp extends Application {
 //            var pos = new ScreenCoordinate(closest).scale(zoom).offset(cameraPosition.scale(-1));
 //            gc.fillOval(e.getX()-zoom*0.05, e.getY()-zoom*0.05, zoom*0.1, zoom*0.1);
 //        });
-    }
-
-    private void drawRobots(Canvas c) {
-        switch (inUse) {
-            case SQUARE -> {}
-            case TRIANGLE -> drawRobots(triGrid, c);
-            case HEXAGON -> drawRobots(hexGrid, c);
-        }
     }
 
     private <C extends Coordinate<C>> void drawRobots(Grid<C> grid, Canvas c) {

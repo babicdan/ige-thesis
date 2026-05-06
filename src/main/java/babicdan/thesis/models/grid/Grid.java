@@ -2,6 +2,7 @@ package babicdan.thesis.models.grid;
 
 import babicdan.thesis.models.Robot;
 import babicdan.thesis.models.coordinate.Coordinate;
+import babicdan.thesis.models.coordinate.TriCoordinate;
 import babicdan.thesis.models.ruleset.RobotPosition;
 import babicdan.thesis.models.ruleset.Ruleset;
 import babicdan.thesis.models.ruleset.RobotView;

@@ -1,6 +1,6 @@
 package babicdan.thesis.ui;
 
-import babicdan.thesis.models.coordinate.HexCoordinate;
+
 import babicdan.thesis.models.coordinate.SquareCoordinate;
 import babicdan.thesis.models.coordinate.TriCoordinate;
 
