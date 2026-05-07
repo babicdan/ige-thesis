@@ -32,6 +32,8 @@ public class Grid<C extends Coordinate<C>> {
     protected Map<C, Robot> savedGrid = new HashMap<>();
     protected int savedRound = 0;
 
+    protected List<Map<C, Robot>> roundSequence = new ArrayList<>();
+
     public Grid(List<C> robotView) {
         this.robotView = robotView;
     }
@@ -92,7 +94,15 @@ public class Grid<C extends Coordinate<C>> {
         }
         round++;
         grid = newGrid;
+        roundSequence.add(newGrid);
         return true;
+    }
+
+    public void undoStep() {
+        if(roundSequence.size() <= 1) return;
+        round--;
+        roundSequence.removeLast();
+        grid = roundSequence.getLast();
     }
 
     public HashMap<C, List<RobotPosition<C>>> getMoves() {
@@ -107,11 +117,15 @@ public class Grid<C extends Coordinate<C>> {
     public void saveGrid() {
         savedGrid = new HashMap<>(grid);
         savedRound = round;
+        roundSequence.clear();
+        roundSequence.add(grid);
     }
 
     public void reloadGrid() {
         grid = new HashMap<>(savedGrid);
         round = savedRound;
+        roundSequence.clear();
+        roundSequence.add(grid);
     }
 
     public int getRound() {

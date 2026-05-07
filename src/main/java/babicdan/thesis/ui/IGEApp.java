@@ -116,6 +116,7 @@ public class IGEApp extends Application {
                 case KeyCode.R -> grid.reloadGrid();
                 case KeyCode.C -> copyRobotsAsTikz();
                 case KeyCode.SPACE, KeyCode.RIGHT -> grid.step();
+                case KeyCode.LEFT -> grid.undoStep();
             }
             drawGrid(gridCanvas);
             drawRobots(grid, canvas);
@@ -154,6 +155,8 @@ public class IGEApp extends Application {
                 dragStartPosition = cameraPosition.offset(e.getX(), e.getY());
                 drawGrid(gridCanvas);
             }
+            else if(e.getDeltaY() > 1)
+                grid.undoStep();
             else
                 grid.step();
             drawRobots(grid, canvas);
