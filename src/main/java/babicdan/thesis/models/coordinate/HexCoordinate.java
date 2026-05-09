@@ -51,9 +51,7 @@ public record HexCoordinate(int x, int y, boolean top) implements Coordinate<Hex
 
     @Override
     public ScreenCoordinate getScreenCoordinate() {
-        return new TriCoordinate(
-                2*x + y + n(top), x + 2*y + n(top)
-        ).getScreenCoordinate();
+        return getTriCoordinate().getScreenCoordinate();
     }
 
     @Override
@@ -63,6 +61,12 @@ public record HexCoordinate(int x, int y, boolean top) implements Coordinate<Hex
         int compY = Integer.compare(y, o.y);
         if(compY != 0) return compY;
         return Integer.compare(top?1:0, o.top?1:0);
+    }
+
+    public TriCoordinate getTriCoordinate() {
+        return new TriCoordinate(
+                2*x + y + n(top), x + 2*y + n(top)
+        );
     }
 
     private int n(boolean b) {

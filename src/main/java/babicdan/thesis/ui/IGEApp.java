@@ -25,7 +25,7 @@ import java.util.*;
 public class IGEApp extends Application {
     private Stage stage;
 
-    private static final double ROBOT_SIZE = 0.8;
+    private static final double ROBOT_SIZE = 0.7;
     private static final double DEFAULT_ZOOM = 30;
     private static final double ZOOM_FACTOR = 1./290;
     private static final double ZOOM_MIN = 6;
@@ -287,17 +287,34 @@ public class IGEApp extends Application {
         String node = "\\node at (%d, %d) {%c};\n";
         String move = "\\draw (%d, %d) -- +(%d, %d);\n";
         StringBuilder result = new StringBuilder();
-        final Clipboard c = Clipboard.getSystemClipboard();
-        final ClipboardContent cc = new ClipboardContent();
-        for(var r : triGrid.getRobots()) {
-            result.append(String.format(node, r.position().x(), r.position().y(), r.robot().color()));
-        }
-        result.append("\n");
-        for(var r : triGrid.getMoves().entrySet()) {
-            for(var dir : r.getValue()) {
-                result.append(String.format(move, r.getKey().x(), r.getKey().y(), dir.position().x(), dir.position().y()));
+
+        if(inUse == GridType.TRIANGLE) {
+            for(var r : triGrid.getRobots()) {
+                result.append(String.format(node, r.position().x(), r.position().y(), r.robot().color()));
+            }
+            result.append("\n");
+            for(var r : triGrid.getMoves().entrySet()) {
+                for(var dir : r.getValue()) {
+                    result.append(String.format(move, r.getKey().x(), r.getKey().y(), dir.position().x(), dir.position().y()));
+                }
             }
         }
+        else if(inUse == GridType.HEXAGON) {
+            for(var r : hexGrid.getRobots()) {
+                result.append(String.format(node, r.position().getTriCoordinate().x(), r.position().getTriCoordinate().y(), r.robot().color()));
+            }
+            for(var r : hexGrid.getMoves().entrySet()) {
+                for(var dir : r.getValue()) {
+                    result.append(String.format(move, r.getKey().getTriCoordinate().x(), r.getKey().getTriCoordinate().y(),
+                            dir.position().getTriCoordinate().x(), dir.position().getTriCoordinate().y()));
+                }
+            }
+        }
+        else
+            return;
+
+        final Clipboard c = Clipboard.getSystemClipboard();
+        final ClipboardContent cc = new ClipboardContent();
 
         cc.putString(result.toString());
         c.setContent(cc);
