@@ -113,6 +113,11 @@ public class IGEApp extends Application {
                     grid = hexGrid;
                     inUse = GridType.HEXAGON;
                 }
+                case KeyCode.DIGIT7, KeyCode.NUMPAD7 -> {
+                    hexGrid = AlgorithmHelper.hexDemoThree();
+                    grid = hexGrid;
+                    inUse = GridType.HEXAGON;
+                }
                 case KeyCode.R -> grid.reloadGrid();
                 case KeyCode.C -> copyRobotsAsTikz();
                 case KeyCode.SPACE, KeyCode.RIGHT -> grid.step();
