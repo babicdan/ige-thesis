@@ -19,8 +19,8 @@ public record HexCoordinate(int x, int y, boolean top) implements Coordinate<Hex
 
     @Override
     public HexCoordinate add(HexCoordinate o) {
-        return new HexCoordinate((top == o.top) ? x - o.x : x + o.x,
-                (top == o.top) ? y - o.y : y + o.y,
+        return new HexCoordinate(top ? x - o.x : x + o.x,
+                top ? y - o.y : y + o.y,
                 top ^ o.top);
     }
 
@@ -41,7 +41,6 @@ public record HexCoordinate(int x, int y, boolean top) implements Coordinate<Hex
 
     @Override
     public HexCoordinate mirror() {
-        // a different option might be HexCoordinate(-x, y, !top);
         return new HexCoordinate(y, x, top);
     }
 

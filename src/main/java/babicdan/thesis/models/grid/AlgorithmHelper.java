@@ -240,19 +240,19 @@ public class AlgorithmHelper {
         Grid<HexCoordinate> grid = new Grid<>(new ArrayList<>(nset));
 
         var front = new HexCoordinate(0,0,false);
-        var middle = new HexCoordinate(0,-1,true);
+//        var middle = new HexCoordinate(0,-1,true);
         var back = new HexCoordinate(0,-1,false);
 
         var beacon = new HexCoordinate(1,2,true);
 
 
         grid.addRobot(front, new Robot('L'));
-        grid.addRobot(middle, new Robot('F'));
+//        grid.addRobot(middle, new Robot('F'));
         grid.addRobot(back, new Robot('F'));
         grid.addRobot(beacon, new Robot('L'));
 
         grid.addRule(grid.getView(front), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('L')));
-        grid.addRule(grid.getView(middle), new RobotPosition<>(new HexCoordinate(0, -1, true), new Robot('F')));
+//        grid.addRule(grid.getView(middle), new RobotPosition<>(new HexCoordinate(0, -1, true), new Robot('F')));
         grid.addRule(grid.getView(back), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('F')));
 
         grid.saveGrid();
