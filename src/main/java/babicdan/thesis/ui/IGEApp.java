@@ -32,7 +32,7 @@ public class IGEApp extends Application {
     private static final double ZOOM_MAX = 300;
 
     private GridType inUse = GridType.TRIANGLE;
-    private Grid<TriCoordinate> triGrid = AlgorithmHelper.algorithmTriOne();
+    private Grid<TriCoordinate> triGrid = AlgorithmHelper.algoTriOne();
     private Grid<HexCoordinate> hexGrid = AlgorithmHelper.hexDemoTwo();
     private Grid<? extends Coordinate<?>> grid = triGrid;
 
@@ -84,27 +84,27 @@ public class IGEApp extends Application {
         s.setOnKeyPressed((k) -> {
             switch (k.getCode()) {
                 case KeyCode.DIGIT1, KeyCode.NUMPAD1 -> {
-                    triGrid = AlgorithmHelper.algorithmTriOne();
+                    triGrid = AlgorithmHelper.algoTriOne();
                     grid = triGrid;
                     inUse = GridType.TRIANGLE;
                 }
                 case KeyCode.DIGIT2, KeyCode.NUMPAD2 -> {
-                    triGrid = AlgorithmHelper.algorithmTriTwo();
+                    triGrid = AlgorithmHelper.algoTriTwo();
                     grid = triGrid;
                     inUse = GridType.TRIANGLE;
                 }
                 case KeyCode.DIGIT3, KeyCode.NUMPAD3 -> {
-                    triGrid = AlgorithmHelper.algorithmTriThree();
+                    triGrid = AlgorithmHelper.algoTriThree();
                     grid = triGrid;
                     inUse = GridType.TRIANGLE;
                 }
                 case KeyCode.DIGIT4, KeyCode.NUMPAD4 -> {
-                    triGrid = AlgorithmHelper.algorithmTriThreeAlt();
+                    triGrid = AlgorithmHelper.algoTriThreeAlt();
                     grid = triGrid;
                     inUse = GridType.TRIANGLE;
                 }
                 case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> {
-                    hexGrid = AlgorithmHelper.hexDemoTwo();
+                    hexGrid = AlgorithmHelper.algoHexThree();
                     grid = hexGrid;
                     inUse = GridType.HEXAGON;
                 }
@@ -114,7 +114,7 @@ public class IGEApp extends Application {
                     inUse = GridType.HEXAGON;
                 }
                 case KeyCode.DIGIT7, KeyCode.NUMPAD7 -> {
-                    hexGrid = AlgorithmHelper.hexDemoThree();
+                    hexGrid = AlgorithmHelper.hexDemoTwo();
                     grid = hexGrid;
                     inUse = GridType.HEXAGON;
                 }

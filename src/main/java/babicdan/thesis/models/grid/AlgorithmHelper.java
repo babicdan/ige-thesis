@@ -10,7 +10,18 @@ import java.util.HashSet;
 import java.util.List;
 
 public class AlgorithmHelper {
-    public static Grid<TriCoordinate> algorithmTriOne() {
+    static public class HexDirections {
+        public final static HexCoordinate idle = new HexCoordinate(0,0,false);
+        public final static HexCoordinate up = new HexCoordinate(0,0,true);
+        public final static HexCoordinate upOdd = new HexCoordinate(0,-1,true);
+        public final static HexCoordinate down = new HexCoordinate(0,-1,true);
+        public final static HexCoordinate downOdd = new HexCoordinate(0,0,true);
+        public final static HexCoordinate left = new HexCoordinate(-1,0,true);
+        public final static HexCoordinate right = new HexCoordinate(-1,0,true);
+
+    }
+
+    public static Grid<TriCoordinate> algoTriOne() {
 
         List<TriCoordinate> n = new TriCoordinate(0, 0).neighbours();
 
@@ -63,7 +74,7 @@ public class AlgorithmHelper {
         return grid;
     }
 
-    public static Grid<TriCoordinate> algorithmTriTwo() {
+    public static Grid<TriCoordinate> algoTriTwo() {
         Grid<TriCoordinate> grid = new Grid<>(new TriCoordinate(0, 0).neighbours());
 
         var shipFront = new TriCoordinate(0, 0);
@@ -111,7 +122,7 @@ public class AlgorithmHelper {
         return grid;
     }
 
-    public static Grid<TriCoordinate> algorithmTriThreeAlt() {
+    public static Grid<TriCoordinate> algoTriThreeAlt() {
         Grid<TriCoordinate> grid = new Grid<>(new TriCoordinate(0, 0).neighbours());
 
         var shipFront = new TriCoordinate(0, 0);
@@ -147,7 +158,7 @@ public class AlgorithmHelper {
         return grid;
     }
 
-    public static Grid<TriCoordinate> algorithmTriThree() {
+    public static Grid<TriCoordinate> algoTriThree() {
         Grid<TriCoordinate> grid = new Grid<>(new TriCoordinate(0, 0).neighbours());
 
         var shipFront = new TriCoordinate(0, 0);
@@ -194,6 +205,67 @@ public class AlgorithmHelper {
         grid.addRobot(beacon3, new Robot('B'));
 
         grid.saveGrid();
+
+        return grid;
+    }
+
+    public static Grid<HexCoordinate> algoHexThree() {
+        List<HexCoordinate> n = new HexCoordinate(0, 0, false).neighbours();
+        HashSet<HexCoordinate> nset = new HashSet<>();
+
+        for(var i : n) {
+            for(var j : n) {
+                nset.add(i.add(j));
+            }
+        }
+
+        Grid<HexCoordinate> grid = new Grid<>(new ArrayList<>(nset));
+
+        var front = new HexCoordinate(0,0,true);
+//        var middle = new HexCoordinate(0,-1,true);
+        var back = new HexCoordinate(0,-1,true);
+
+        var beacon1 = new HexCoordinate(-1,0,true);
+        var beacon2 = new HexCoordinate(-1,-1,true);
+        var beacon3 = new HexCoordinate(1,-2,true);
+
+        grid.addRobot(front, new Robot('L'));
+        grid.addRobot(back, new Robot('F'));
+
+        grid.addRule(grid.getView(front), new RobotPosition<>(HexDirections.upOdd, new Robot('L')));
+        grid.addRule(grid.getView(back), new RobotPosition<>(HexDirections.upOdd, new Robot('F')));
+
+        grid.addRobot(beacon1, new Robot('B'));
+
+        grid.addRule(grid.getView(front), new RobotPosition<>(HexDirections.upOdd, new Robot('B')));
+        grid.addRule(grid.getView(back), new RobotPosition<>(HexDirections.upOdd, new Robot('F')));
+        grid.addRule(grid.getView(beacon1), new RobotPosition<>(HexDirections.downOdd, new Robot('L')));
+
+        grid.addRobot(beacon2, new Robot('B'));
+        grid.addRobot(beacon3, new Robot('F'));
+
+        grid.addRule(grid.getView(back), new RobotPosition<>(HexDirections.upOdd, new Robot('F')));
+        grid.addRule(grid.getView(beacon1), new RobotPosition<>(HexDirections.downOdd, new Robot('L')));
+        grid.addRule(grid.getView(beacon3), new RobotPosition<>(HexDirections.idle, new Robot('B')));
+
+        grid.saveGrid();
+
+        grid.step();    // 1
+
+        grid.addRule(grid.getView(front.add(HexDirections.upOdd)), new RobotPosition<>(HexDirections.up, new Robot('B')));
+        grid.addRule(grid.getView(back.add(HexDirections.upOdd)), new RobotPosition<>(HexDirections.left, new Robot('F')));
+        grid.addRule(grid.getView(beacon1.add(HexDirections.downOdd)), new RobotPosition<>(HexDirections.left, new Robot('L')));
+
+
+        grid.step();    // 2
+        grid.step();    // 3
+        grid.step();    // 4
+
+        // leader seeing a beacon from the distance
+        grid.addRule(grid.getView(new HexCoordinate(0,-2,true)), new RobotPosition<>(HexDirections.right, new Robot('L')));
+
+
+        grid.reloadGrid();
 
         return grid;
     }
@@ -281,61 +353,4 @@ public class AlgorithmHelper {
         return grid;
     }
 
-    public static Grid<HexCoordinate> hexDemoThree() {
-        List<HexCoordinate> n = new HexCoordinate(0, 0, false).neighbours();
-        HashSet<HexCoordinate> nset = new HashSet<>();
-
-        for(var i : n) {
-            for(var j : n) {
-                nset.add(i.add(j));
-            }
-        }
-
-        Grid<HexCoordinate> grid = new Grid<>(new ArrayList<>(nset));
-
-        var front = new HexCoordinate(0,0,false);
-//        var middle = new HexCoordinate(0,-1,true);
-        var back = new HexCoordinate(0,-1,false);
-
-        var beacon = new HexCoordinate(-1,1,true);
-
-
-        grid.addRobot(front, new Robot('L'));
-        grid.addRobot(back, new Robot('F'));
-        grid.addRobot(beacon, new Robot('B'));
-
-        grid.addRule(grid.getView(front), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('L')));
-        grid.addRule(grid.getView(back), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('F')));
-
-        grid.saveGrid();
-
-        grid.step();    // 1
-
-        grid.addRule(grid.getView(front.add(new HexCoordinate(0, 0, true))),
-                new RobotPosition<>(new HexCoordinate(0, -1, true), new Robot('L')));
-
-        grid.step();    // 2
-
-        grid.addRule(grid.getView(front.add(new HexCoordinate(0, 1, false))),
-                new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('L')));
-
-        grid.step();    // 3
-
-        grid.addRule(grid.getView(beacon), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('L')));
-
-        grid.addRule(grid.getView(front.add(new HexCoordinate(0, 1, true))),
-                new RobotPosition<>(new HexCoordinate(0, -1, true), new Robot('B')));
-
-        grid.addRule(grid.getView(back.add(new HexCoordinate(0, 1, true))), new RobotPosition<>(new HexCoordinate(0, -1, true), new Robot('F')));
-
-        grid.step();    // 4
-
-        grid.addRule(grid.getView(front.add(new HexCoordinate(0, 2, false))),
-                new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('B')));
-
-        grid.addRule(grid.getView(back.add(new HexCoordinate(0, 2, false))), new RobotPosition<>(new HexCoordinate(-1, 0, true), new Robot('F')));
-
-        grid.reloadGrid();
-        return grid;
-    }
 }
