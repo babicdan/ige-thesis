@@ -47,7 +47,7 @@ public class IGEApp extends Application {
     private double zoom = DEFAULT_ZOOM;
 
     @Override
-    public void start(Stage stage) throws InterruptedException {
+    public void start(Stage stage) {
         this.stage = stage;
 
         Pane pane = new Pane();
@@ -306,7 +306,9 @@ public class IGEApp extends Application {
             for(var r : hexGrid.getMoves().entrySet()) {
                 for(var dir : r.getValue()) {
                     result.append(String.format(move, r.getKey().getTriCoordinate().x(), r.getKey().getTriCoordinate().y(),
-                            dir.position().getTriCoordinate().x(), dir.position().getTriCoordinate().y()));
+                            dir.position().getTriCoordinate().x()*(dir.position().top()?-1:1),
+                            dir.position().getTriCoordinate().y()*(dir.position().top()?-1:1)
+                    ));
                 }
             }
         }
