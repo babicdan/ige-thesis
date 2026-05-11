@@ -71,6 +71,7 @@ public class AlgorithmHelper {
         grid.addRobot(beacon3.add(new TriCoordinate(-1, 0)), new Robot('R'));
 
         grid.saveGrid();
+        grid.reloadGrid();
         return grid;
     }
 

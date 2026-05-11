@@ -203,6 +203,13 @@ public class IGEApp extends Application {
         gc.setFill(Color.BLACK);
         gc.fillText("Round " + grid.getRound(), 10, 20);
 
+        for(var v : grid.getVisited()) {
+            gc.setFill(Color.LIGHTSLATEGREY);
+            var pos = v.getScreenCoordinate().scale(zoom).offset(cameraPosition.scale(-1));
+            gc.fillOval(pos.x()-zoom*ROBOT_SIZE/6, pos.y()-zoom*ROBOT_SIZE/6,
+                    zoom*ROBOT_SIZE/3, zoom*ROBOT_SIZE/3);
+        }
+
         var robots = grid.getRobots();
         for(var r : robots) {
             gc.setFill(colorMap.getOrDefault(r.robot(), Color.GREY));

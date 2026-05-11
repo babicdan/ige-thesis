@@ -2,7 +2,6 @@ package babicdan.thesis.models.grid;
 
 import babicdan.thesis.models.Robot;
 import babicdan.thesis.models.coordinate.Coordinate;
-import babicdan.thesis.models.coordinate.TriCoordinate;
 import babicdan.thesis.models.ruleset.RobotPosition;
 import babicdan.thesis.models.ruleset.Ruleset;
 import babicdan.thesis.models.ruleset.RobotView;
@@ -33,6 +32,8 @@ public class Grid<C extends Coordinate<C>> {
     protected int savedRound = 0;
 
     protected List<Map<C, Robot>> roundSequence = new ArrayList<>();
+    protected Set<C> visited = new HashSet<>();
+
 
     public Grid(List<C> robotView) {
         this.robotView = robotView;
@@ -52,6 +53,7 @@ public class Grid<C extends Coordinate<C>> {
 
     public void addRobot(C pos, Robot r) {
         grid.put(pos, r);
+        visited.add(pos);
     }
 
     public boolean removeRobot(C pos) {
@@ -95,6 +97,11 @@ public class Grid<C extends Coordinate<C>> {
         round++;
         grid = newGrid;
         roundSequence.add(newGrid);
+
+        for(var pair : grid.entrySet()) {
+            visited.add(pair.getKey());
+        }
+
         return true;
     }
 
@@ -126,10 +133,19 @@ public class Grid<C extends Coordinate<C>> {
         round = savedRound;
         roundSequence.clear();
         roundSequence.add(grid);
+
+        visited.clear();
+        for(var pair : grid.entrySet()) {
+            visited.add(pair.getKey());
+        }
     }
 
     public int getRound() {
         return round;
+    }
+
+    public Set<C> getVisited() {
+        return visited;
     }
 
     @Override
