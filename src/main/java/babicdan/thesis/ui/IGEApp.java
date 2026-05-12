@@ -278,11 +278,14 @@ public class IGEApp extends Application {
         gc.setLineWidth(zoom/40);
 
         var zero = new HexCoordinate(0,0,false);
+        var center = cameraPosition.offset(new ScreenCoordinate(c.getWidth()/2, c.getHeight()/2)).scale(1/zoom).getTriCoordinate();
+        int x = 2*center.x()/3 - center.y()/3;
+        int y = 2*center.y()/3 - center.x()/3;
 
-        for(int i = -20; i <= 20; i++) {
-            for(int j = -20; j <=20; j++) {
+        for(int i = -50; i <= 50; i++) {
+            for(int j = -50; j <=50; j++) {
                 for(var d : zero.neighbours()) {
-                    var fromHex = new HexCoordinate(i, j, false);
+                    var fromHex = new HexCoordinate(x+i, y+j, false);
                     var toHex = fromHex.add(d);
                     var start = fromHex.getScreenCoordinate().scale(zoom).offset(cameraPosition.scale(-1));
                     var end = toHex.getScreenCoordinate().scale(zoom).offset(cameraPosition.scale(-1));
