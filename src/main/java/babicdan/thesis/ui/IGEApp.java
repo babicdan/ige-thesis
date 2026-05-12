@@ -282,8 +282,16 @@ public class IGEApp extends Application {
         int x = 2*center.x()/3 - center.y()/3;
         int y = 2*center.y()/3 - center.x()/3;
 
-        for(int i = -50; i <= 50; i++) {
-            for(int j = -50; j <=50; j++) {
+        int xRange = (int) (0.5*c.getWidth()/zoom)+1;
+        int yRange = (int) ((0.5*c.getHeight()+0.5*c.getWidth())/zoom)+1;
+
+        if(4 * xRange * yRange > 20000) {
+            xRange = Math.min(100,xRange);
+            yRange = Math.min(50,yRange);
+        }
+
+        for(int i = -xRange; i <= xRange; i++) {
+            for(int j = -yRange; j <= yRange; j++) {
                 for(var d : zero.neighbours()) {
                     var fromHex = new HexCoordinate(x+i, y+j, false);
                     var toHex = fromHex.add(d);
