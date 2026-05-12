@@ -4,20 +4,19 @@ import babicdan.thesis.models.Robot;
 import babicdan.thesis.models.coordinate.HexCoordinate;
 import babicdan.thesis.models.coordinate.TriCoordinate;
 import babicdan.thesis.models.ruleset.RobotPosition;
+import babicdan.thesis.models.ruleset.RobotView;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class AlgorithmHelper {
-    static public class HexDirections {
-        public final static HexCoordinate idle = new HexCoordinate(0,0,false);
-        public final static HexCoordinate up = new HexCoordinate(0,0,true);
-        public final static HexCoordinate upOdd = new HexCoordinate(0,-1,true);
-        public final static HexCoordinate down = new HexCoordinate(0,-1,true);
-        public final static HexCoordinate downOdd = new HexCoordinate(0,0,true);
-        public final static HexCoordinate left = new HexCoordinate(-1,0,true);
-        public final static HexCoordinate right = new HexCoordinate(-1,0,true);
+    static public class Hexes {
+        public final static HexCoordinate IDLE = new HexCoordinate(0,0,false);
+        public final static HexCoordinate UP = new HexCoordinate(0,0,true);
+        public final static HexCoordinate UP_ODD = new HexCoordinate(0,-1,true);
+        public final static HexCoordinate DOWN = new HexCoordinate(0,-1,true);
+        public final static HexCoordinate DOWN_ODD = new HexCoordinate(0,0,true);
+        public final static HexCoordinate LEFT = new HexCoordinate(-1,0,true);
+        public final static HexCoordinate RIGHT = new HexCoordinate(-1,0,true);
 
     }
 
@@ -233,29 +232,29 @@ public class AlgorithmHelper {
         grid.addRobot(front, new Robot('L'));
         grid.addRobot(back, new Robot('F'));
 
-        grid.addRule(grid.getView(front), new RobotPosition<>(HexDirections.upOdd, new Robot('L')));
-        grid.addRule(grid.getView(back), new RobotPosition<>(HexDirections.upOdd, new Robot('F')));
+        grid.addRule(grid.getView(front), new RobotPosition<>(Hexes.UP_ODD, new Robot('L')));
+        grid.addRule(grid.getView(back), new RobotPosition<>(Hexes.UP_ODD, new Robot('F')));
 
         grid.addRobot(beacon1, new Robot('B'));
 
-        grid.addRule(grid.getView(front), new RobotPosition<>(HexDirections.upOdd, new Robot('B')));
-        grid.addRule(grid.getView(back), new RobotPosition<>(HexDirections.upOdd, new Robot('F')));
-        grid.addRule(grid.getView(beacon1), new RobotPosition<>(HexDirections.downOdd, new Robot('L')));
+        grid.addRule(grid.getView(front), new RobotPosition<>(Hexes.UP_ODD, new Robot('B')));
+        grid.addRule(grid.getView(back), new RobotPosition<>(Hexes.UP_ODD, new Robot('F')));
+        grid.addRule(grid.getView(beacon1), new RobotPosition<>(Hexes.DOWN_ODD, new Robot('L')));
 
         grid.addRobot(beacon2, new Robot('B'));
         grid.addRobot(beacon3, new Robot('F'));
 
-        grid.addRule(grid.getView(back), new RobotPosition<>(HexDirections.upOdd, new Robot('F')));
-        grid.addRule(grid.getView(beacon1), new RobotPosition<>(HexDirections.downOdd, new Robot('L')));
-        grid.addRule(grid.getView(beacon3), new RobotPosition<>(HexDirections.idle, new Robot('B')));
+        grid.addRule(grid.getView(back), new RobotPosition<>(Hexes.UP_ODD, new Robot('F')));
+        grid.addRule(grid.getView(beacon1), new RobotPosition<>(Hexes.DOWN_ODD, new Robot('L')));
+        grid.addRule(grid.getView(beacon3), new RobotPosition<>(Hexes.IDLE, new Robot('B')));
 
         grid.saveGrid();
 
         grid.step();    // 1
 
-        grid.addRule(grid.getView(front.add(HexDirections.upOdd)), new RobotPosition<>(HexDirections.up, new Robot('B')));
-        grid.addRule(grid.getView(back.add(HexDirections.upOdd)), new RobotPosition<>(HexDirections.left, new Robot('F')));
-        grid.addRule(grid.getView(beacon1.add(HexDirections.downOdd)), new RobotPosition<>(HexDirections.left, new Robot('L')));
+        grid.addRule(grid.getView(front.add(Hexes.UP_ODD)), new RobotPosition<>(Hexes.UP, new Robot('B')));
+        grid.addRule(grid.getView(back.add(Hexes.UP_ODD)), new RobotPosition<>(Hexes.LEFT, new Robot('F')));
+        grid.addRule(grid.getView(beacon1.add(Hexes.DOWN_ODD)), new RobotPosition<>(Hexes.LEFT, new Robot('L')));
 
 
         grid.step();    // 2
@@ -263,7 +262,7 @@ public class AlgorithmHelper {
         grid.step();    // 4
 
         // leader seeing a beacon from the distance
-        grid.addRule(grid.getView(new HexCoordinate(0,-2,true)), new RobotPosition<>(HexDirections.right, new Robot('L')));
+        grid.addRule(grid.getView(new HexCoordinate(0,-2,true)), new RobotPosition<>(Hexes.RIGHT, new Robot('L')));
 
 
         grid.reloadGrid();
@@ -302,53 +301,101 @@ public class AlgorithmHelper {
 
     public static Grid<HexCoordinate> hexDemoTwo() {
         List<HexCoordinate> n = new HexCoordinate(0, 0, false).neighbours();
-        HashSet<HexCoordinate> nset = new HashSet<>();
+        Grid<HexCoordinate> grid = new Grid<>(n);
 
-        for(var i : n) {
-            for(var j : n) {
-                nset.add(i.add(j));
-            }
-        }
+        var frontL = new HexCoordinate(-1,1, false);
+        var frontR = new HexCoordinate(0,0,true);
+        var middleL = new HexCoordinate(-1,0,true);
+        var middleR = new HexCoordinate(0,0,false);
+        var backL = new HexCoordinate(-1, 0,false);
+        var backR = new HexCoordinate(0,-1,true);
 
-        Grid<HexCoordinate> grid = new Grid<>(new ArrayList<>(nset));
+        for(var r : List.of(frontL, frontR))
+            grid.addRobot(r, new Robot('L'));
 
-        var front = new HexCoordinate(0,0,false);
-        var middle = new HexCoordinate(0,-1,true);
-        var back = new HexCoordinate(0,-1,false);
-
-        var beacon = new HexCoordinate(-1,1,true);
-
-
-        grid.addRobot(front, new Robot('L'));
-        grid.addRobot(middle, new Robot('F'));
-        grid.addRobot(back, new Robot('F'));
-        grid.addRobot(beacon, new Robot('L'));
-
-        grid.addRule(grid.getView(front), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('L')));
-        grid.addRule(grid.getView(middle), new RobotPosition<>(new HexCoordinate(0, -1, true), new Robot('F')));
-        grid.addRule(grid.getView(back), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('F')));
+        for(var r : List.of(middleL, middleR, backL, backR))
+            grid.addRobot(r, new Robot('F'));
 
         grid.saveGrid();
 
-        grid.step();    // 1
+        // round 1
 
-        grid.addRule(grid.getView(front.add(new HexCoordinate(0, 0, true))),
-                new RobotPosition<>(new HexCoordinate(0, -1, true), new Robot('L')));
+        // ambiguous
+        grid.addRule(new RobotView<>(Map.of(
+                Hexes.IDLE, new Robot('L'),
+                Hexes.DOWN, new Robot('F')
+                )), new RobotPosition<>(Hexes.UP, new Robot('?'))
+        );
 
-        grid.step();    // 2
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('F'),
+                        Hexes.DOWN, new Robot('F'),
+                        Hexes.LEFT, new Robot('F'),
+                        Hexes.UP, new Robot('L')
+                )), new RobotPosition<>(Hexes.UP, new Robot('W'))
+        );
 
-        grid.addRule(grid.getView(middle.add(new HexCoordinate(0, -1, false))),
-                new RobotPosition<>(new HexCoordinate(0, -1, true), new Robot('F')));
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('F'),
+                        Hexes.UP, new Robot('F')
+                )), new RobotPosition<>(Hexes.UP, new Robot('F'))
+        );
 
-        grid.addRule(grid.getView(beacon), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('L')));
+        // round 2
 
-        grid.addRule(grid.getView(front.add(new HexCoordinate(0, 1, false))),
-                new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('L')));
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('W'),
+                        Hexes.UP, new Robot('?'),
+                        Hexes.DOWN, new Robot('F')
+                )), new RobotPosition<>(Hexes.LEFT, new Robot('?'))
+        );
 
-        grid.step();    // 3
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('F'),
+                        Hexes.LEFT, new Robot('F'),
+                        Hexes.UP, new Robot('W')
+                )), new RobotPosition<>(Hexes.UP, new Robot('L'))
+        );
 
-        grid.addRule(grid.getView(middle.add(new HexCoordinate(0, -2, true))),
-                new RobotPosition<>(new HexCoordinate(-1, 0, true), new Robot('F')));
+        // round 3
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('?'),
+                        Hexes.LEFT, new Robot('?'),
+                        Hexes.DOWN, new Robot('L')
+                )), new RobotPosition<>(Hexes.IDLE, new Robot('L'))
+        );
+
+        // round 4
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('L'),
+                        Hexes.UP, new Robot('L'),
+                        Hexes.LEFT, new Robot('?')
+                )), new RobotPosition<>(Hexes.IDLE, new Robot('F'))
+        );
+
+        // round 5
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('L'),
+                        Hexes.LEFT, new Robot('L'),
+                        Hexes.DOWN, new Robot('F')
+                )), new RobotPosition<>(Hexes.UP, new Robot('L'))
+        );
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('F'),
+                        Hexes.UP, new Robot('L'),
+                        Hexes.LEFT, new Robot('?')
+                )), new RobotPosition<>(Hexes.UP, new Robot('F'))
+        );
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('?'),
+                        Hexes.LEFT, new Robot('F')
+                )), new RobotPosition<>(Hexes.LEFT, new Robot('F'))
+        );
 
         grid.reloadGrid();
         return grid;

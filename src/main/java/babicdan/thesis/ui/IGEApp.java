@@ -40,7 +40,9 @@ public class IGEApp extends Application {
             new Robot('R'), Color.BLACK,
             new Robot('L'), Color.DODGERBLUE,
             new Robot('F'), Color.LAWNGREEN,
-            new Robot('B'), Color.CRIMSON
+            new Robot('B'), Color.CRIMSON,
+            new Robot('W'), Color.GOLD,
+            new Robot('?'), Color.VIOLET
     ));
     private ScreenCoordinate cameraPosition = new ScreenCoordinate(0, 0);
     private ScreenCoordinate dragStartPosition = new ScreenCoordinate(0, 0);
@@ -53,7 +55,7 @@ public class IGEApp extends Application {
         Pane pane = new Pane();
         Scene s = new Scene(pane, 1200, 900, Color.WHITE);
 
-        stage.setTitle("IGE Problem Visualisation");
+        stage.setTitle("IGE Problem Visualization");
         stage.setScene(s);
         stage.show();
 
