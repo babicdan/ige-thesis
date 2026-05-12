@@ -332,7 +332,7 @@ public class AlgorithmHelper {
                         Hexes.DOWN, new Robot('F'),
                         Hexes.LEFT, new Robot('F'),
                         Hexes.UP, new Robot('L')
-                )), new RobotPosition<>(Hexes.UP, new Robot('W'))
+                )), new RobotPosition<>(Hexes.UP, new Robot('?'))
         );
 
         grid.addRule(new RobotView<>(Map.of(
@@ -344,7 +344,7 @@ public class AlgorithmHelper {
         // round 2
 
         grid.addRule(new RobotView<>(Map.of(
-                        Hexes.IDLE, new Robot('W'),
+                        Hexes.IDLE, new Robot('?'),
                         Hexes.UP, new Robot('?'),
                         Hexes.DOWN, new Robot('F')
                 )), new RobotPosition<>(Hexes.LEFT, new Robot('?'))
@@ -353,7 +353,7 @@ public class AlgorithmHelper {
         grid.addRule(new RobotView<>(Map.of(
                         Hexes.IDLE, new Robot('F'),
                         Hexes.LEFT, new Robot('F'),
-                        Hexes.UP, new Robot('W')
+                        Hexes.UP, new Robot('?')
                 )), new RobotPosition<>(Hexes.UP, new Robot('L'))
         );
 
