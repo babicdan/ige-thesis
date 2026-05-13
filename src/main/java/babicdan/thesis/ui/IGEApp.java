@@ -28,7 +28,7 @@ public class IGEApp extends Application {
     private static final double ROBOT_SIZE = 0.7;
     private static final double DEFAULT_ZOOM = 30;
     private static final double ZOOM_FACTOR = 1./290;
-    private static final double ZOOM_MIN = 6;
+    private static final double ZOOM_MIN = 10;
     private static final double ZOOM_MAX = 300;
 
     private GridType inUse = GridType.TRIANGLE;
@@ -42,7 +42,7 @@ public class IGEApp extends Application {
             new Robot('F'), Color.LAWNGREEN,
             new Robot('B'), Color.CRIMSON,
             new Robot('W'), Color.GOLD,
-            new Robot('?'), Color.VIOLET
+            new Robot('?'), Color.DARKORANGE
     ));
     private ScreenCoordinate cameraPosition = new ScreenCoordinate(0, 0);
     private ScreenCoordinate dragStartPosition = new ScreenCoordinate(0, 0);
@@ -171,12 +171,14 @@ public class IGEApp extends Application {
 
 //        s.setOnMouseMoved((e) -> {
 //            var closestTri = cameraPosition.offset(e.getX(), e.getY()).scale(1/zoom).getTriCoordinate();
+//            var closestHex = new HexCoordinate(closestTri.x()+2*closestTri.y(), 2*closestTri.x()+closestTri.y(),
+//                    Math.floorMod(closestTri.x() + closestTri.y(), 2) == 1);
 //            GraphicsContext gc = canvas.getGraphicsContext2D();
 //            gc.setFill(Color.WHITE);
 //            gc.fillRect(0, 0, 200, 30);
 //            gc.setFill(Color.BLACK);
-//            gc.fillText(closestTri.toString(), 10, 20);
-//            var pos = new ScreenCoordinate(closestTri).scale(zoom).offset(cameraPosition.scale(-1));
+//            gc.fillText(closestHex.toString(), 10, 20);
+//            var pos = closestHex.getScreenCoordinate().scale(zoom).offset(cameraPosition.scale(-1));
 //            gc.setFill(Color.MEDIUMVIOLETRED);
 //            gc.fillOval(pos.x()-zoom*0.1, pos.y()-zoom*0.1, zoom*0.2, zoom*0.2);
 //        });
