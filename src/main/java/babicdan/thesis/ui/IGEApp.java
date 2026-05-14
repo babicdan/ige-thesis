@@ -162,9 +162,9 @@ public class IGEApp extends Application {
                 dragStartPosition = cameraPosition.offset(e.getX(), e.getY());
                 drawGrid(gridCanvas);
             }
-            else if(e.getDeltaY() > 1)
+            else if(e.getDeltaY() > 0)
                 grid.undoStep();
-            else
+            else if(e.getDeltaY() < 0)
                 grid.step();
             drawRobots(grid, canvas);
         });
