@@ -299,7 +299,7 @@ public class AlgorithmHelper {
         return grid;
     }
 
-    public static Grid<HexCoordinate> hexDemoTwo() {
+    public static Grid<HexCoordinate> hexMovingGroup() {
         List<HexCoordinate> n = new HexCoordinate(0, 0, false).neighbours();
         Grid<HexCoordinate> grid = new Grid<>(n);
 

@@ -27,14 +27,14 @@ public class IGEApp extends Application {
 
     private static final double ROBOT_SIZE = 0.7;
     private static final double DEFAULT_ZOOM = 30;
-    private static final double ZOOM_FACTOR = 1./290;
+    private static final double ZOOM_STEP = 1./290;
     private static final double ZOOM_MIN = 10;
     private static final double ZOOM_MAX = 300;
 
-    private GridType inUse = GridType.TRIANGLE;
     private Grid<TriCoordinate> triGrid = AlgorithmHelper.algoTriOne();
-    private Grid<HexCoordinate> hexGrid = AlgorithmHelper.hexDemoTwo();
+    private Grid<HexCoordinate> hexGrid = AlgorithmHelper.hexMovingGroup();
     private Grid<? extends Coordinate<?>> grid = triGrid;
+    private GridType inUse = GridType.TRIANGLE;
 
     private final Map<Robot, Color> colorMap = new HashMap<>(Map.of(
             new Robot('R'), Color.BLACK,
@@ -44,9 +44,11 @@ public class IGEApp extends Application {
             new Robot('W'), Color.GOLD,
             new Robot('?'), Color.DARKORANGE
     ));
+
     private ScreenCoordinate cameraPosition = new ScreenCoordinate(0, 0);
     private ScreenCoordinate dragStartPosition = new ScreenCoordinate(0, 0);
     private double zoom = DEFAULT_ZOOM;
+    private boolean showVisited = true;
 
     @Override
     public void start(Stage stage) {
@@ -84,46 +86,53 @@ public class IGEApp extends Application {
         drawRobots(grid, canvas);
 
         s.setOnKeyPressed((k) -> {
-            switch (k.getCode()) {
-                case KeyCode.DIGIT1, KeyCode.NUMPAD1 -> {
-                    triGrid = AlgorithmHelper.algoTriOne();
-                    grid = triGrid;
-                    inUse = GridType.TRIANGLE;
+            if(k.isShiftDown()) {
+                switch (k.getCode()) {
+                    case KeyCode.DIGIT3, KeyCode.NUMPAD3 -> {
+                        triGrid = AlgorithmHelper.algoTriThreeAlt();
+                        grid = triGrid;
+                        inUse = GridType.TRIANGLE;
+                    }
+                    case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> {
+                        hexGrid = AlgorithmHelper.hexDemoOne();
+                        grid = hexGrid;
+                        inUse = GridType.HEXAGON;
+                    }
                 }
-                case KeyCode.DIGIT2, KeyCode.NUMPAD2 -> {
-                    triGrid = AlgorithmHelper.algoTriTwo();
-                    grid = triGrid;
-                    inUse = GridType.TRIANGLE;
+            }
+            else {
+                switch (k.getCode()) {
+                    case KeyCode.DIGIT1, KeyCode.NUMPAD1 -> {
+                        triGrid = AlgorithmHelper.algoTriOne();
+                        grid = triGrid;
+                        inUse = GridType.TRIANGLE;
+                    }
+                    case KeyCode.DIGIT2, KeyCode.NUMPAD2 -> {
+                        triGrid = AlgorithmHelper.algoTriTwo();
+                        grid = triGrid;
+                        inUse = GridType.TRIANGLE;
+                    }
+                    case KeyCode.DIGIT3, KeyCode.NUMPAD3 -> {
+                        triGrid = AlgorithmHelper.algoTriThree();
+                        grid = triGrid;
+                        inUse = GridType.TRIANGLE;
+                    }
+                    case KeyCode.DIGIT4, KeyCode.NUMPAD4 -> {
+                        hexGrid = AlgorithmHelper.algoHexThree();
+                        grid = hexGrid;
+                        inUse = GridType.HEXAGON;
+                    }
+                    case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> {
+                        hexGrid = AlgorithmHelper.hexMovingGroup();
+                        grid = hexGrid;
+                        inUse = GridType.HEXAGON;
+                    }
+                    case KeyCode.R -> grid.reloadGrid();
+                    case KeyCode.T -> showVisited = !showVisited;
+                    case KeyCode.C -> copyRobotsAsTikz();
+                    case KeyCode.SPACE, KeyCode.RIGHT -> grid.step();
+                    case KeyCode.LEFT -> grid.undoStep();
                 }
-                case KeyCode.DIGIT3, KeyCode.NUMPAD3 -> {
-                    triGrid = AlgorithmHelper.algoTriThree();
-                    grid = triGrid;
-                    inUse = GridType.TRIANGLE;
-                }
-                case KeyCode.DIGIT4, KeyCode.NUMPAD4 -> {
-                    triGrid = AlgorithmHelper.algoTriThreeAlt();
-                    grid = triGrid;
-                    inUse = GridType.TRIANGLE;
-                }
-                case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> {
-                    hexGrid = AlgorithmHelper.algoHexThree();
-                    grid = hexGrid;
-                    inUse = GridType.HEXAGON;
-                }
-                case KeyCode.DIGIT6, KeyCode.NUMPAD6 -> {
-                    hexGrid = AlgorithmHelper.hexDemoOne();
-                    grid = hexGrid;
-                    inUse = GridType.HEXAGON;
-                }
-                case KeyCode.DIGIT7, KeyCode.NUMPAD7 -> {
-                    hexGrid = AlgorithmHelper.hexDemoTwo();
-                    grid = hexGrid;
-                    inUse = GridType.HEXAGON;
-                }
-                case KeyCode.R -> grid.reloadGrid();
-                case KeyCode.C -> copyRobotsAsTikz();
-                case KeyCode.SPACE, KeyCode.RIGHT -> grid.step();
-                case KeyCode.LEFT -> grid.undoStep();
             }
             drawGrid(gridCanvas);
             drawRobots(grid, canvas);
@@ -153,7 +162,7 @@ public class IGEApp extends Application {
 
         s.setOnScroll((e) -> {
             if(e.isControlDown()) {
-                double newZoom = Math.exp(Math.log(zoom) + e.getDeltaY() * ZOOM_FACTOR);
+                double newZoom = Math.exp(Math.log(zoom) + e.getDeltaY() * ZOOM_STEP);
                 newZoom = Math.clamp(newZoom, ZOOM_MIN, ZOOM_MAX);
                 ScreenCoordinate pointStart = cameraPosition.offset(e.getX(), e.getY());
                 ScreenCoordinate pointEnd = pointStart.scale(newZoom/zoom);
@@ -207,12 +216,13 @@ public class IGEApp extends Application {
         gc.setFill(Color.BLACK);
         gc.fillText("Round " + grid.getRound(), 10, 20);
 
-        for(var v : grid.getVisited()) {
-            gc.setFill(Color.LIGHTSLATEGREY);
-            var pos = v.getScreenCoordinate().scale(zoom).offset(cameraPosition.scale(-1));
-            gc.fillOval(pos.x()-zoom*ROBOT_SIZE/6, pos.y()-zoom*ROBOT_SIZE/6,
-                    zoom*ROBOT_SIZE/3, zoom*ROBOT_SIZE/3);
-        }
+        if(showVisited)
+            for(var v : grid.getVisited()) {
+                gc.setFill(Color.LIGHTSLATEGREY);
+                var pos = v.getScreenCoordinate().scale(zoom).offset(cameraPosition.scale(-1));
+                gc.fillOval(pos.x()-zoom*ROBOT_SIZE/6, pos.y()-zoom*ROBOT_SIZE/6,
+                        zoom*ROBOT_SIZE/3, zoom*ROBOT_SIZE/3);
+            }
 
         var robots = grid.getRobots();
         for(var r : robots) {
