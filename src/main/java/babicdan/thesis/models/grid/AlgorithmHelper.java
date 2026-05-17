@@ -209,7 +209,7 @@ public class AlgorithmHelper {
         return grid;
     }
 
-    public static Grid<HexCoordinate> algoHexThree() {
+    public static Grid<HexCoordinate> algoHexOne() {
         List<HexCoordinate> n = new HexCoordinate(0, 0, false).neighbours();
         HashSet<HexCoordinate> nset = new HashSet<>();
 
@@ -324,7 +324,7 @@ public class AlgorithmHelper {
         grid.addRule(new RobotView<>(Map.of(
                 Hexes.IDLE, new Robot('L'),
                 Hexes.DOWN, new Robot('F')
-                )), new RobotPosition<>(Hexes.UP, new Robot('?'))
+                )), new RobotPosition<>(Hexes.UP, new Robot('S'))
         );
 
         grid.addRule(new RobotView<>(Map.of(
@@ -332,7 +332,7 @@ public class AlgorithmHelper {
                         Hexes.DOWN, new Robot('F'),
                         Hexes.LEFT, new Robot('F'),
                         Hexes.UP, new Robot('L')
-                )), new RobotPosition<>(Hexes.UP, new Robot('?'))
+                )), new RobotPosition<>(Hexes.UP, new Robot('S'))
         );
 
         grid.addRule(new RobotView<>(Map.of(
@@ -344,24 +344,24 @@ public class AlgorithmHelper {
         // round 2
 
         grid.addRule(new RobotView<>(Map.of(
-                        Hexes.IDLE, new Robot('?'),
-                        Hexes.UP, new Robot('?'),
+                        Hexes.IDLE, new Robot('S'),
+                        Hexes.UP, new Robot('S'),
                         Hexes.DOWN, new Robot('F')
-                )), new RobotPosition<>(Hexes.LEFT, new Robot('?'))
+                )), new RobotPosition<>(Hexes.LEFT, new Robot('S'))
         );
 
         grid.addRule(new RobotView<>(Map.of(
                         Hexes.IDLE, new Robot('F'),
                         Hexes.LEFT, new Robot('F'),
-                        Hexes.UP, new Robot('?')
+                        Hexes.UP, new Robot('S')
                 )), new RobotPosition<>(Hexes.UP, new Robot('L'))
         );
 
         // round 3
 
         grid.addRule(new RobotView<>(Map.of(
-                        Hexes.IDLE, new Robot('?'),
-                        Hexes.LEFT, new Robot('?'),
+                        Hexes.IDLE, new Robot('S'),
+                        Hexes.LEFT, new Robot('S'),
                         Hexes.DOWN, new Robot('L')
                 )), new RobotPosition<>(Hexes.IDLE, new Robot('L'))
         );
@@ -371,7 +371,7 @@ public class AlgorithmHelper {
         grid.addRule(new RobotView<>(Map.of(
                         Hexes.IDLE, new Robot('L'),
                         Hexes.UP, new Robot('L'),
-                        Hexes.LEFT, new Robot('?')
+                        Hexes.LEFT, new Robot('S')
                 )), new RobotPosition<>(Hexes.IDLE, new Robot('F'))
         );
 
@@ -387,12 +387,12 @@ public class AlgorithmHelper {
         grid.addRule(new RobotView<>(Map.of(
                         Hexes.IDLE, new Robot('F'),
                         Hexes.UP, new Robot('L'),
-                        Hexes.LEFT, new Robot('?')
+                        Hexes.LEFT, new Robot('S')
                 )), new RobotPosition<>(Hexes.UP, new Robot('F'))
         );
 
         grid.addRule(new RobotView<>(Map.of(
-                        Hexes.IDLE, new Robot('?'),
+                        Hexes.IDLE, new Robot('S'),
                         Hexes.LEFT, new Robot('F')
                 )), new RobotPosition<>(Hexes.LEFT, new Robot('F'))
         );

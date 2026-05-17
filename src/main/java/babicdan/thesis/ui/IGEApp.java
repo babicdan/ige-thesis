@@ -42,7 +42,7 @@ public class IGEApp extends Application {
             new Robot('F'), Color.LAWNGREEN,
             new Robot('B'), Color.CRIMSON,
             new Robot('W'), Color.GOLD,
-            new Robot('?'), Color.DARKORANGE
+            new Robot('S'), Color.DARKORANGE
     ));
 
     private ScreenCoordinate cameraPosition = new ScreenCoordinate(0, 0);
@@ -118,7 +118,7 @@ public class IGEApp extends Application {
                         inUse = GridType.TRIANGLE;
                     }
                     case KeyCode.DIGIT4, KeyCode.NUMPAD4 -> {
-                        hexGrid = AlgorithmHelper.algoHexThree();
+                        hexGrid = AlgorithmHelper.algoHexOne();
                         grid = hexGrid;
                         inUse = GridType.HEXAGON;
                     }
@@ -316,31 +316,46 @@ public class IGEApp extends Application {
     }
 
     private void copyRobotsAsTikz() {
-        String node = "\\node at (%d, %d) {%c};\n";
-        String move = "\\draw (%d, %d) -- +(%d, %d);\n";
+        String node = "\\node (%d) at (%d, %d) {%c};\n";
+        String moveDir = "\\draw (%d) -- +(%d, %d);\n";
+        String moveOnto = "\\draw (%d) -- (%d);\n";
         StringBuilder result = new StringBuilder();
 
         if(inUse == GridType.TRIANGLE) {
             for(var r : triGrid.getRobots()) {
-                result.append(String.format(node, r.position().x(), r.position().y(), r.robot().color()));
+                result.append(String.format(node, r.position().hashCode(),
+                        r.position().x(), r.position().y(), r.robot().color()));
             }
             result.append("\n");
             for(var r : triGrid.getMoves().entrySet()) {
                 for(var dir : r.getValue()) {
-                    result.append(String.format(move, r.getKey().x(), r.getKey().y(), dir.position().x(), dir.position().y()));
+                    var onto = r.getKey().add(dir.position());
+                    if(triGrid.get(onto).isPresent()) {
+                        result.append(String.format(moveOnto, r.getKey().hashCode(), onto.hashCode()));
+                    }
+                    else {
+                        result.append(String.format(moveDir, r.getKey().hashCode(), dir.position().x(), dir.position().y()));
+                    }
                 }
             }
         }
         else if(inUse == GridType.HEXAGON) {
             for(var r : hexGrid.getRobots()) {
-                result.append(String.format(node, r.position().getTriCoordinate().x(), r.position().getTriCoordinate().y(), r.robot().color()));
+                result.append(String.format(node, r.position().hashCode(),
+                        r.position().getTriCoordinate().x(), r.position().getTriCoordinate().y(), r.robot().color()));
             }
             for(var r : hexGrid.getMoves().entrySet()) {
                 for(var dir : r.getValue()) {
-                    result.append(String.format(move, r.getKey().getTriCoordinate().x(), r.getKey().getTriCoordinate().y(),
+                    var onto = r.getKey().add(dir.position());
+                    if(hexGrid.get(onto).isPresent()) {
+                        result.append(String.format(moveOnto, r.getKey().hashCode(), onto.hashCode()));
+                    }
+                    else {
+                    result.append(String.format(moveDir, r.getKey().hashCode(),
                             dir.position().getTriCoordinate().x()*(dir.position().top()?-1:1),
                             dir.position().getTriCoordinate().y()*(dir.position().top()?-1:1)
                     ));
+                    }
                 }
             }
         }
