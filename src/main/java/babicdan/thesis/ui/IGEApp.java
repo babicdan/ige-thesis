@@ -319,39 +319,46 @@ public class IGEApp extends Application {
         String node = "\\node (%d) at (%d, %d) {%c};\n";
         String moveDir = "\\draw (%d) -- +(%d, %d);\n";
         String moveOnto = "\\draw (%d) -- (%d);\n";
-        StringBuilder result = new StringBuilder();
+        String template = "\\begin{scope}[every node/.style={robot,rblack}]\n" +
+                "%s" +
+                "\\end{scope}\n" +
+                "\\begin{scope} [moves]\n" +
+                "%s" +
+                "\\end{scope}";
+        StringBuilder robots = new StringBuilder();
+        StringBuilder moves = new StringBuilder();
 
         if(inUse == GridType.TRIANGLE) {
             for(var r : triGrid.getRobots()) {
-                result.append(String.format(node, r.position().hashCode(),
+                robots.append(String.format(node, r.position().hashCode(),
                         r.position().x(), r.position().y(), r.robot().color()));
             }
-            result.append("\n");
+            robots.append("\n");
             for(var r : triGrid.getMoves().entrySet()) {
                 for(var dir : r.getValue()) {
                     var onto = r.getKey().add(dir.position());
                     if(triGrid.get(onto).isPresent()) {
-                        result.append(String.format(moveOnto, r.getKey().hashCode(), onto.hashCode()));
+                        moves.append(String.format(moveOnto, r.getKey().hashCode(), onto.hashCode()));
                     }
                     else {
-                        result.append(String.format(moveDir, r.getKey().hashCode(), dir.position().x(), dir.position().y()));
+                        moves.append(String.format(moveDir, r.getKey().hashCode(), dir.position().x(), dir.position().y()));
                     }
                 }
             }
         }
         else if(inUse == GridType.HEXAGON) {
             for(var r : hexGrid.getRobots()) {
-                result.append(String.format(node, r.position().hashCode(),
+                robots.append(String.format(node, r.position().hashCode(),
                         r.position().getTriCoordinate().x(), r.position().getTriCoordinate().y(), r.robot().color()));
             }
             for(var r : hexGrid.getMoves().entrySet()) {
                 for(var dir : r.getValue()) {
                     var onto = r.getKey().add(dir.position());
                     if(hexGrid.get(onto).isPresent()) {
-                        result.append(String.format(moveOnto, r.getKey().hashCode(), onto.hashCode()));
+                        moves.append(String.format(moveOnto, r.getKey().hashCode(), onto.hashCode()));
                     }
                     else {
-                    result.append(String.format(moveDir, r.getKey().hashCode(),
+                        moves.append(String.format(moveDir, r.getKey().hashCode(),
                             dir.position().getTriCoordinate().x()*(dir.position().top()?-1:1),
                             dir.position().getTriCoordinate().y()*(dir.position().top()?-1:1)
                     ));
@@ -365,7 +372,7 @@ public class IGEApp extends Application {
         final Clipboard c = Clipboard.getSystemClipboard();
         final ClipboardContent cc = new ClipboardContent();
 
-        cc.putString(result.toString());
+        cc.putString(String.format(template, robots, moves));
         c.setContent(cc);
     }
 }
