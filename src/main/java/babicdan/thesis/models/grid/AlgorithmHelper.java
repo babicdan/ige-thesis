@@ -108,7 +108,10 @@ public class AlgorithmHelper {
 
 
         grid.addRule(grid.getView(shipBack.add(new TriCoordinate(1, 0))),
-                new RobotPosition<>(new TriCoordinate(1, 1), new Robot('F')));
+                new RobotPosition<>(new TriCoordinate(1, 0), new Robot('F')));
+
+        grid.addRule(grid.getView(shipMiddle.add(new TriCoordinate(1, 0))),
+                new RobotPosition<>(new TriCoordinate(0, 1), new Robot('F')));
 
         grid.addRule(grid.getView(beacon1), new RobotPosition<>(new TriCoordinate(0, -1), new Robot('L')));
 
@@ -276,25 +279,70 @@ public class AlgorithmHelper {
 
         for(var i : n) {
             for(var j : n) {
-                nset.add(i.add(j));
+                for(var k : n) {
+                    nset.add(i.add(j).add(k));
+                }
             }
         }
+
 
         Grid<HexCoordinate> grid = new Grid<>(new ArrayList<>(nset));
 
         var front = new HexCoordinate(0,0,false);
         var middle = new HexCoordinate(0,-1,false);
         var back = new HexCoordinate(0,-2,true);
+        var back_alt = new HexCoordinate(-1,-1,true);
+
+        var beacon1 = new HexCoordinate(1,1,false);
+        var beacon2 = new HexCoordinate(-2,3,true);
+        var beacon3 = new HexCoordinate(-4,3,false);
+        var beacon4 = new HexCoordinate(-4,0,true);
+        var beacon5 = new HexCoordinate(0,-3,false);
+        var beacon6 = new HexCoordinate(2,-3,true);
 
         grid.addRobot(front, new Robot('R'));
         grid.addRobot(middle, new Robot('R'));
         grid.addRobot(back, new Robot('R'));
 
-        grid.addRule(grid.getView(front), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('R')));
-        grid.addRule(grid.getView(middle), new RobotPosition<>(new HexCoordinate(0, 0, true), new Robot('R')));
-        grid.addRule(grid.getView(back), new RobotPosition<>(new HexCoordinate(0, -1, true), new Robot('R')));
+        grid.addRobot(beacon1, new Robot('R'));
+        grid.addRobot(beacon2, new Robot('R'));
+        grid.addRobot(beacon3, new Robot('R'));
+        grid.addRobot(beacon4, new Robot('R'));
+        grid.addRobot(beacon6, new Robot('R'));
+
+        grid.addRule(grid.getView(front), new RobotPosition<>(Hexes.UP, new Robot('R')));
+        grid.addRule(grid.getView(middle), new RobotPosition<>(Hexes.UP, new Robot('R')));
+        grid.addRule(grid.getView(back), new RobotPosition<>(Hexes.UP_ODD, new Robot('R')));
+
+        grid.removeRobot(back);
+        grid.addRobot(back_alt, new Robot('R'));
+        grid.addRobot(beacon5, new Robot('R'));
+        grid.addRule(grid.getView(front), new RobotPosition<>(Hexes.UP, new Robot('R')));
+        grid.addRule(grid.getView(middle), new RobotPosition<>(Hexes.UP, new Robot('R')));
+        grid.addRule(grid.getView(back_alt), new RobotPosition<>(Hexes.RIGHT, new Robot('R')));
+
+
 
         grid.saveGrid();
+
+        grid.step();
+
+        grid.addRule(grid.getView(beacon1), new RobotPosition<>(Hexes.UP));
+        grid.addRule(grid.getView(front = front.add(Hexes.UP)), new RobotPosition<>(Hexes.UP_ODD));
+
+        grid.step();
+
+        grid.addRule(grid.getView(beacon1.add(Hexes.UP)), new RobotPosition<>(Hexes.RIGHT));
+        grid.addRule(grid.getView(front.add(Hexes.UP_ODD)), new RobotPosition<>(Hexes.LEFT));
+
+//        grid.step();
+
+//        grid.addRule(grid.getView(front.add(Hexes.LEFT)), new RobotPosition<>(Hexes.UP_ODD));
+//        grid.addRule(grid.getView(middle.add(Hexes.UP).add(Hexes.UP_ODD).add(Hexes.UP)), new RobotPosition<>(Hexes.UP_ODD));
+//        grid.addRule(grid.getView(back.add(Hexes.UP_ODD).add(Hexes.UP).add(Hexes.UP_ODD)), new RobotPosition<>(Hexes.UP));
+
+
+        grid.reloadGrid();
 
         return grid;
     }
@@ -324,6 +372,115 @@ public class AlgorithmHelper {
         grid.addRule(new RobotView<>(Map.of(
                 Hexes.IDLE, new Robot('L'),
                 Hexes.DOWN, new Robot('F')
+                )), new RobotPosition<>(Hexes.UP, new Robot('S'))
+        );
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('F'),
+                        Hexes.DOWN, new Robot('F'),
+                        Hexes.LEFT, new Robot('F'),
+                        Hexes.UP, new Robot('L')
+                )), new RobotPosition<>(Hexes.UP, new Robot('S'))
+        );
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('F'),
+                        Hexes.UP, new Robot('F')
+                )), new RobotPosition<>(Hexes.UP, new Robot('F'))
+        );
+
+        // round 2
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('S'),
+                        Hexes.UP, new Robot('S'),
+                        Hexes.DOWN, new Robot('F')
+                )), new RobotPosition<>(Hexes.LEFT, new Robot('S'))
+        );
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('F'),
+                        Hexes.LEFT, new Robot('F'),
+                        Hexes.UP, new Robot('S')
+                )), new RobotPosition<>(Hexes.UP, new Robot('L'))
+        );
+
+        // round 3
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('S'),
+                        Hexes.LEFT, new Robot('S'),
+                        Hexes.DOWN, new Robot('L')
+                )), new RobotPosition<>(Hexes.IDLE, new Robot('L'))
+        );
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('L'),
+                        Hexes.LEFT, new Robot('S'),
+                        Hexes.UP, new Robot('S')
+                )), new RobotPosition<>(Hexes.IDLE, new Robot('F'))
+        );
+
+        // round 4
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('L'),
+                        Hexes.UP, new Robot('L'),
+                        Hexes.LEFT, new Robot('S')
+                )), new RobotPosition<>(Hexes.IDLE, new Robot('F'))
+        );
+
+        // round 5
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('L'),
+                        Hexes.LEFT, new Robot('L'),
+                        Hexes.DOWN, new Robot('F')
+                )), new RobotPosition<>(Hexes.UP, new Robot('L'))
+        );
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('F'),
+                        Hexes.UP, new Robot('L'),
+                        Hexes.LEFT, new Robot('S')
+                )), new RobotPosition<>(Hexes.UP, new Robot('F'))
+        );
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('S'),
+                        Hexes.LEFT, new Robot('F')
+                )), new RobotPosition<>(Hexes.LEFT, new Robot('F'))
+        );
+
+        grid.reloadGrid();
+        return grid;
+    }
+
+    public static Grid<HexCoordinate> algoHexTwo() {
+        List<HexCoordinate> n = new HexCoordinate(0, 0, false).neighbours();
+        Grid<HexCoordinate> grid = new Grid<>(n);
+
+        var frontL = new HexCoordinate(-1,1, false);
+        var frontR = new HexCoordinate(0,0,true);
+        var middleL = new HexCoordinate(-1,0,true);
+        var middleR = new HexCoordinate(0,0,false);
+        var backL = new HexCoordinate(-1, 0,false);
+        var backR = new HexCoordinate(0,-1,true);
+
+        var beacon = new HexCoordinate(-1,1, true);
+
+        for(var r : List.of(frontL, frontR))
+            grid.addRobot(r, new Robot('L'));
+
+        for(var r : List.of(middleL, middleR, backL, backR))
+            grid.addRobot(r, new Robot('F'));
+
+        // round 1
+
+        // ambiguous
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('L'),
+                        Hexes.DOWN, new Robot('F')
                 )), new RobotPosition<>(Hexes.UP, new Robot('S'))
         );
 
@@ -397,7 +554,36 @@ public class AlgorithmHelper {
                 )), new RobotPosition<>(Hexes.LEFT, new Robot('F'))
         );
 
-        grid.reloadGrid();
+        // BEACON RULES
+
+        grid.addRobot(beacon, new Robot('B'));
+
+        // first spotting a beacon
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('L'),
+                        Hexes.DOWN, new Robot('F'),
+                        Hexes.UP, new Robot('B')
+                )), new RobotPosition<>(Hexes.LEFT, new Robot('F'))
+        );
+
+        // next round, spotting side movement
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('F'),
+                        Hexes.RIGHT, new Robot('S')
+                )), new RobotPosition<>(Hexes.UP_ODD, new Robot('F'))
+        );
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('S'),
+                        Hexes.LEFT, new Robot('F'),
+                        Hexes.UP, new Robot('B'),
+                        Hexes.DOWN, new Robot('F')
+                )), new RobotPosition<>(Hexes.LEFT, new Robot('F'))
+        );
+
+        grid.saveGrid();
+
         return grid;
     }
 

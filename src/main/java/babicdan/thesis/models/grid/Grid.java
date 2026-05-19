@@ -74,24 +74,30 @@ public class Grid<C extends Coordinate<C>> {
         for(var pair : grid.entrySet()) {
             ArrayList<RobotPosition<C>> moves = new ArrayList<>(ruleset.getMoves(new RobotView<>(pair.getKey(), this::get, robotView)));
             if(moves.isEmpty()) {
-                if (newGrid.put(pair.getKey(), pair.getValue()) != null)
+                if (newGrid.put(pair.getKey(), pair.getValue()) != null) {
+                    System.out.println("Collision detected!");
                     return false;
+                }
             }
             else {
                 Collections.shuffle(moves);
                 var move = moves.getFirst();
 
                 // New map insertion, vertex collision detection
-                if(newGrid.put(pair.getKey().add(move.position()), move.robot()) != null)
+                if(newGrid.put(pair.getKey().add(move.position()), move.robot()) != null) {
+                    System.out.println("Collision detected!");
                     return false;
+                }
 
                 // Edge collision detection
                 if(!usedEdges.add(
                         new Edge<>(
                                 pair.getKey(), pair.getKey().add(move.position())
                         )
-                ))
+                )) {
+                    System.out.println("Collision detected!");
                     return false;
+                }
             }
         }
         round++;

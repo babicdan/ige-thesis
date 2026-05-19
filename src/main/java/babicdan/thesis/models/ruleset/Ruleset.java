@@ -12,7 +12,8 @@ public class Ruleset<C extends Coordinate<C>> {
 
     public void addRule(RobotView<C> view, RobotPosition<C> move) {
         RobotView<C> normal = view.normalize().getFirst();
-        rules.put(normal, normal.transformMove(move));
+        if(rules.put(normal, normal.transformMove(move)) != null)
+            System.out.println("Duplicate rule added.");
     }
 
     public List<Map.Entry<RobotView<C>, RobotPosition<C>>> getRules() {
