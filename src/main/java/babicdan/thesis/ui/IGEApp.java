@@ -316,7 +316,7 @@ public class IGEApp extends Application {
     }
 
     private void copyRobotsAsTikz() {
-        String node = "\\node (%d) at (%d, %d) {%c};\n";
+        String node = "\\node (%d) at (%d, %d)[%s] {%c};\n";
         String moveDir = "\\draw (%d) -- +(%d, %d);\n";
         String moveOnto = "\\draw (%d) -- (%d);\n";
         String template = "\\begin{scope}[every node/.style={robot,rblack}]\n" +
@@ -328,10 +328,19 @@ public class IGEApp extends Application {
         StringBuilder robots = new StringBuilder();
         StringBuilder moves = new StringBuilder();
 
+        final Map<Robot, String> tikzColor = new HashMap<>(Map.of(
+                new Robot('R'), "rblack",
+                new Robot('L'), "rblue",
+                new Robot('F'), "rgreen",
+                new Robot('B'), "rred",
+                new Robot('W'), "rviolet",
+                new Robot('S'), "rorange"
+        ));
+
         if(inUse == GridType.TRIANGLE) {
             for(var r : triGrid.getRobots()) {
                 robots.append(String.format(node, r.position().hashCode(),
-                        r.position().x(), r.position().y(), r.robot().color()));
+                        r.position().x(), r.position().y(), tikzColor.get(r.robot()), r.robot().color()));
             }
             robots.append("\n");
             for(var r : triGrid.getMoves().entrySet()) {
@@ -349,7 +358,7 @@ public class IGEApp extends Application {
         else if(inUse == GridType.HEXAGON) {
             for(var r : hexGrid.getRobots()) {
                 robots.append(String.format(node, r.position().hashCode(),
-                        r.position().getTriCoordinate().x(), r.position().getTriCoordinate().y(), r.robot().color()));
+                        r.position().getTriCoordinate().x(), r.position().getTriCoordinate().y(), tikzColor.get(r.robot()), r.robot().color()));
             }
             for(var r : hexGrid.getMoves().entrySet()) {
                 for(var dir : r.getValue()) {
@@ -359,8 +368,8 @@ public class IGEApp extends Application {
                     }
                     else {
                         moves.append(String.format(moveDir, r.getKey().hashCode(),
-                            dir.position().getTriCoordinate().x()*(dir.position().top()?-1:1),
-                            dir.position().getTriCoordinate().y()*(dir.position().top()?-1:1)
+                            dir.position().getTriCoordinate().x()*(r.getKey().top()?-1:1),
+                            dir.position().getTriCoordinate().y()*(r.getKey().top()?-1:1)
                     ));
                     }
                 }

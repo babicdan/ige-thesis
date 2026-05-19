@@ -108,7 +108,10 @@ public class AlgorithmHelper {
 
 
         grid.addRule(grid.getView(shipBack.add(new TriCoordinate(1, 0))),
-                new RobotPosition<>(new TriCoordinate(1, 1), new Robot('F')));
+                new RobotPosition<>(new TriCoordinate(1, 0), new Robot('F')));
+
+        grid.addRule(grid.getView(shipMiddle.add(new TriCoordinate(1, 0))),
+                new RobotPosition<>(new TriCoordinate(0, 1), new Robot('F')));
 
         grid.addRule(grid.getView(beacon1), new RobotPosition<>(new TriCoordinate(0, -1), new Robot('L')));
 
