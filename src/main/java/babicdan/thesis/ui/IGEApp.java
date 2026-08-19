@@ -94,7 +94,7 @@ public class IGEApp extends Application {
                         inUse = GridType.TRIANGLE;
                     }
                     case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> {
-                        hexGrid = AlgorithmHelper.hexDemoOne();
+                        hexGrid = AlgorithmHelper.algoHexTwo();
                         grid = hexGrid;
                         inUse = GridType.HEXAGON;
                     }
@@ -128,7 +128,7 @@ public class IGEApp extends Application {
                         inUse = GridType.HEXAGON;
                     }
                     case KeyCode.DIGIT6, KeyCode.NUMPAD6 -> {
-                        hexGrid = AlgorithmHelper.algoHexTwo();
+                        hexGrid = AlgorithmHelper.hexDemoOne();
                         grid = hexGrid;
                         inUse = GridType.HEXAGON;
                     }
