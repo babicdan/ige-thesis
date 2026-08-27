@@ -12,6 +12,10 @@ public class Ruleset<C extends Coordinate<C>> {
 
     public void addRule(RobotView<C> view, RobotPosition<C> move) {
         RobotView<C> normal = view.normalize().getFirst();
+        if(rules.containsKey(normal)) {
+            System.out.println("Rule view already defined.");
+            return;
+        }
         if(rules.put(normal, normal.transformMove(move)) != null)
             System.out.println("Duplicate rule added.");
     }

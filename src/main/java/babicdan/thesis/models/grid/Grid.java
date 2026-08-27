@@ -76,6 +76,7 @@ public class Grid<C extends Coordinate<C>> {
             if(moves.isEmpty()) {
                 if (newGrid.put(pair.getKey(), pair.getValue()) != null) {
                     System.out.println("Collision detected!");
+                    System.out.println(pair.getKey());
                     return false;
                 }
             }
@@ -86,16 +87,15 @@ public class Grid<C extends Coordinate<C>> {
                 // New map insertion, vertex collision detection
                 if(newGrid.put(pair.getKey().add(move.position()), move.robot()) != null) {
                     System.out.println("Collision detected!");
+                    System.out.println(pair.getKey().add(move.position()));
                     return false;
                 }
 
                 // Edge collision detection
-                if(!usedEdges.add(
-                        new Edge<>(
-                                pair.getKey(), pair.getKey().add(move.position())
-                        )
-                )) {
+                var edge = new Edge<>(pair.getKey(), pair.getKey().add(move.position()));
+                if(!usedEdges.add(edge)) {
                     System.out.println("Collision detected!");
+                    System.out.println(edge);
                     return false;
                 }
             }
