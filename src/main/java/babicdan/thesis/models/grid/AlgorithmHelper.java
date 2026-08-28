@@ -479,10 +479,10 @@ public class AlgorithmHelper {
         for(var r : List.of(middleL, middleR))
             grid.addRobot(r, new Robot('F'));
 
-        for(var r : List.of(backL, backR))
+        for(var r : List.of(backL, beacon6))
             grid.addRobot(r, new Robot('S'));
 
-        for(var r : List.of(beacon1, beacon2, beacon3, beacon4, beacon5, beacon6))
+        for(var r : List.of(beacon1, beacon2, beacon3, beacon4, beacon5, backR))
             grid.addRobot(r, new Robot('B'));;
 
         // round 1
@@ -570,16 +570,23 @@ public class AlgorithmHelper {
         // beacon6 exceptions
 
         grid.addRule(new RobotView<>(Map.of(
-                        Hexes.IDLE, new Robot('B'),
-                        Hexes.UP_ODD, new Robot('S')
+                        Hexes.IDLE, new Robot('S'),
+                        Hexes.UP_ODD, new Robot('B')
                 )), new RobotPosition<>(Hexes.UP_ODD, new Robot('B'))
         );
 
         grid.addRule(new RobotView<>(Map.of(
-                        Hexes.IDLE, new Robot('S'),
+                        Hexes.IDLE, new Robot('B'),
                         Hexes.LEFT, new Robot('F'),
-                        Hexes.DOWN, new Robot('B')
+                        Hexes.DOWN, new Robot('S')
                 )), new RobotPosition<>(Hexes.LEFT, new Robot('F'))
+        );
+
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot('F'),
+                        Hexes.UP_ODD, new Robot('L'),
+                        Hexes.RIGHT, new Robot('B')
+                )), new RobotPosition<>(Hexes.UP_ODD, new Robot('F'))
         );
 
 
