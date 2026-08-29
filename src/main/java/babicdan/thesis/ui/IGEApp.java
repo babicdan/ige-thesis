@@ -94,7 +94,12 @@ public class IGEApp extends Application {
                         inUse = GridType.TRIANGLE;
                     }
                     case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> {
-                        hexGrid = AlgorithmHelper.algoHexTwo();
+                        hexGrid = AlgorithmHelper.hexMovingGroup();
+                        grid = hexGrid;
+                        inUse = GridType.HEXAGON;
+                    }
+                    case KeyCode.DIGIT6, KeyCode.NUMPAD6 -> {
+                        hexGrid = AlgorithmHelper.hexDemoOne();
                         grid = hexGrid;
                         inUse = GridType.HEXAGON;
                     }
@@ -123,12 +128,12 @@ public class IGEApp extends Application {
                         inUse = GridType.HEXAGON;
                     }
                     case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> {
-                        hexGrid = AlgorithmHelper.hexMovingGroup();
+                        hexGrid = AlgorithmHelper.algoHexTwo();
                         grid = hexGrid;
                         inUse = GridType.HEXAGON;
                     }
                     case KeyCode.DIGIT6, KeyCode.NUMPAD6 -> {
-                        hexGrid = AlgorithmHelper.hexDemoOne();
+                        hexGrid = AlgorithmHelper.algoHexThree();
                         grid = hexGrid;
                         inUse = GridType.HEXAGON;
                     }
@@ -143,9 +148,7 @@ public class IGEApp extends Application {
             drawRobots(grid, canvas);
         });
 
-        s.setOnMousePressed((e) -> {
-            dragStartPosition = cameraPosition.offset(e.getX(), e.getY());
-        });
+        s.setOnMousePressed((e) -> dragStartPosition = cameraPosition.offset(e.getX(), e.getY()));
 
         s.setOnMouseClicked((e) -> {
             if(!e.isStillSincePress()) return;
@@ -324,12 +327,13 @@ public class IGEApp extends Application {
         String node = "\\node (%d) at (%d, %d)[%s] {%c};\n";
         String moveDir = "\\draw (%d) -- +(%d, %d);\n";
         String moveOnto = "\\draw (%d) -- (%d);\n";
-        String template = "\\begin{scope}[every node/.style={robot,rblack}]\n" +
-                "%s" +
-                "\\end{scope}\n" +
-                "\\begin{scope} [moves]\n" +
-                "%s" +
-                "\\end{scope}";
+        String template = """
+                \\begin{scope}[every node/.style={robot,rblack}]
+                %s\
+                \\end{scope}
+                \\begin{scope} [moves]
+                %s\
+                \\end{scope}""";
         StringBuilder robots = new StringBuilder();
         StringBuilder moves = new StringBuilder();
 

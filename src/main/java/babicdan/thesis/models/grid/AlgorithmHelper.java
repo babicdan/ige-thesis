@@ -20,6 +20,7 @@ public class AlgorithmHelper {
 
     }
 
+    // triangular, single color, view 2
     public static Grid<TriCoordinate> algoTriOne() {
 
         List<TriCoordinate> n = new TriCoordinate(0, 0).neighbours();
@@ -74,6 +75,7 @@ public class AlgorithmHelper {
         return grid;
     }
 
+    // triangular, two colors, visibility range one
     public static Grid<TriCoordinate> algoTriTwo() {
         Grid<TriCoordinate> grid = new Grid<>(new TriCoordinate(0, 0).neighbours());
 
@@ -125,6 +127,7 @@ public class AlgorithmHelper {
         return grid;
     }
 
+    // triangular, five robots, three colors, more roundabout adjustment
     public static Grid<TriCoordinate> algoTriThreeAlt() {
         Grid<TriCoordinate> grid = new Grid<>(new TriCoordinate(0, 0).neighbours());
 
@@ -161,6 +164,7 @@ public class AlgorithmHelper {
         return grid;
     }
 
+    // triangular, five robots, three colors
     public static Grid<TriCoordinate> algoTriThree() {
         Grid<TriCoordinate> grid = new Grid<>(new TriCoordinate(0, 0).neighbours());
 
@@ -212,6 +216,7 @@ public class AlgorithmHelper {
         return grid;
     }
 
+    // hexagonal, five robots
     public static Grid<HexCoordinate> algoHexOne() {
         List<HexCoordinate> n = new HexCoordinate(0, 0, false).neighbours();
         HashSet<HexCoordinate> nset = new HashSet<>();
@@ -273,6 +278,7 @@ public class AlgorithmHelper {
         return grid;
     }
 
+    // hexagonal, single-color half-solution
     public static Grid<HexCoordinate> hexDemoOne() {
         List<HexCoordinate> n = new HexCoordinate(0, 0, false).neighbours();
         HashSet<HexCoordinate> nset = new HashSet<>();
@@ -347,6 +353,7 @@ public class AlgorithmHelper {
         return grid;
     }
 
+    // hexagonal moving group only, visibility range one
     public static Grid<HexCoordinate> hexMovingGroup() {
         List<HexCoordinate> n = new HexCoordinate(0, 0, false).neighbours();
         Grid<HexCoordinate> grid = new Grid<>(n);
@@ -447,6 +454,7 @@ public class AlgorithmHelper {
         return grid;
     }
 
+    // hexagonal, visibility range one
     public static Grid<HexCoordinate> algoHexTwo() {
         // visibility range = 1
         List<HexCoordinate> n = new HexCoordinate(0, 0, false).neighbours();
@@ -483,7 +491,7 @@ public class AlgorithmHelper {
             grid.addRobot(r, new Robot('S'));
 
         for(var r : List.of(beacon1, beacon2, beacon3, beacon4, beacon5, backR))
-            grid.addRobot(r, new Robot('B'));;
+            grid.addRobot(r, new Robot('B'));
 
         // round 1
 
@@ -730,5 +738,170 @@ public class AlgorithmHelper {
 
         return grid;
     }
+
+    // hexagonal, single-color
+    public static Grid<HexCoordinate> algoHexThree() {
+        List<HexCoordinate> n = new HexCoordinate(0, 0, false).neighbours();
+        HashSet<HexCoordinate> nset = new HashSet<>();
+
+        for(var i : n) {
+            for(var j : n) {
+                for(var k : n) {
+                    nset.add(i.add(j).add(k));
+                }
+            }
+        }
+
+
+        Grid<HexCoordinate> grid = new Grid<>(new ArrayList<>(nset));
+
+        var front = new HexCoordinate(-1,0,true);
+        var middle = new HexCoordinate(0,-1,false);
+        var back = new HexCoordinate(-1,0,false);
+
+        var beacon1 = new HexCoordinate(1,1,true);
+        var beacon2 = new HexCoordinate(-1,2,false);
+        var beacon3 = new HexCoordinate(-3,1,true);
+        var beacon4 = new HexCoordinate(-3,-1,true);
+        var beacon5 = new HexCoordinate(0,-3,true);
+        var beacon6 = new HexCoordinate(1,-2,true);
+
+        for(var r : List.of(front, middle, back, beacon1, beacon2, beacon3, beacon4, beacon5, beacon6))
+            grid.addRobot(r, new Robot('R'));
+
+        grid.saveGrid();
+
+        // beacon - move away across hexagon
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.DOWN_ODD.add(Hexes.DOWN).add(Hexes.RIGHT), new Robot()
+                )), new RobotPosition<>(Hexes.UP_ODD)
+        );
+
+        // beacon - move away along a straight line
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.DOWN.add(Hexes.DOWN_ODD).add(Hexes.DOWN), new Robot()
+                )), new RobotPosition<>(Hexes.UP)
+        );
+
+        // to-be front robot round 0
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.UP_ODD.add(Hexes.UP).add(Hexes.UP_ODD), new Robot(),
+                        Hexes.DOWN_ODD, new Robot(),
+                        Hexes.DOWN_ODD.add(Hexes.DOWN).add(Hexes.RIGHT), new Robot()
+                )), new RobotPosition<>(Hexes.RIGHT)
+        );
+
+        // to-be back robot round 0
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.UP, new Robot(),
+                        Hexes.DOWN.add(Hexes.RIGHT), new Robot(),
+                        Hexes.LEFT.add(Hexes.UP_ODD).add(Hexes.LEFT), new Robot()
+                )), new RobotPosition<>(Hexes.DOWN)
+        );
+
+        // after adjustment group movement - front
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.DOWN.add(Hexes.DOWN_ODD), new Robot(),
+                        Hexes.DOWN.add(Hexes.DOWN_ODD).add(Hexes.LEFT), new Robot()
+                )), new RobotPosition<>(Hexes.UP)
+        );
+
+        // after adjustment group movement - middle
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.LEFT, new Robot(),
+                        Hexes.UP.add(Hexes.UP_ODD), new Robot()
+                )), new RobotPosition<>(Hexes.UP)
+        );
+
+        // after adjustment group movement - back
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.RIGHT, new Robot(),
+                        Hexes.RIGHT.add(Hexes.UP).add(Hexes.UP_ODD), new Robot()
+                )), new RobotPosition<>(Hexes.RIGHT)
+        );
+
+
+        // group movement - front
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.DOWN.add(Hexes.DOWN_ODD), new Robot(),
+                        Hexes.DOWN.add(Hexes.DOWN_ODD).add(Hexes.DOWN), new Robot()
+                )), new RobotPosition<>(Hexes.UP)
+        );
+
+        // group movement - middle
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.DOWN, new Robot(),
+                        Hexes.UP.add(Hexes.UP_ODD), new Robot()
+                )), new RobotPosition<>(Hexes.UP)
+        );
+
+        // group movement - middle alt
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.DOWN, new Robot(),
+                        Hexes.UP.add(Hexes.UP_ODD), new Robot(),
+                        Hexes.LEFT.add(Hexes.DOWN_ODD).add(Hexes.LEFT), new Robot()
+                )), new RobotPosition<>(Hexes.UP)
+        );
+
+        // group movement - back
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.UP_ODD, new Robot(),
+                        Hexes.UP_ODD.add(Hexes.UP).add(Hexes.UP_ODD), new Robot()
+                )), new RobotPosition<>(Hexes.UP_ODD)
+        );
+
+        // group front adjustment 1
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.DOWN.add(Hexes.DOWN_ODD), new Robot(),
+                        Hexes.DOWN.add(Hexes.DOWN_ODD).add(Hexes.DOWN), new Robot(),
+                        Hexes.UP.add(Hexes.UP_ODD).add(Hexes.LEFT), new Robot()
+                )), new RobotPosition<>(Hexes.UP)
+        );
+
+        // group front adjustment 2
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.DOWN.add(Hexes.DOWN_ODD), new Robot(),
+                        Hexes.DOWN.add(Hexes.DOWN_ODD).add(Hexes.DOWN), new Robot(),
+                        Hexes.UP.add(Hexes.RIGHT).add(Hexes.UP), new Robot()
+                )), new RobotPosition<>(Hexes.LEFT)
+        );
+
+        // group front adjustment 2 alt
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.DOWN.add(Hexes.DOWN_ODD), new Robot(),
+                        Hexes.DOWN.add(Hexes.DOWN_ODD).add(Hexes.DOWN), new Robot(),
+                        Hexes.UP.add(Hexes.RIGHT).add(Hexes.UP), new Robot(),
+                        Hexes.LEFT.add(Hexes.UP_ODD).add(Hexes.UP), new Robot()
+                )), new RobotPosition<>(Hexes.LEFT)
+        );
+
+        // group front adjustment 2 alt (alt)
+        grid.addRule(new RobotView<>(Map.of(
+                        Hexes.IDLE, new Robot(),
+                        Hexes.DOWN.add(Hexes.DOWN_ODD), new Robot(),
+                        Hexes.DOWN.add(Hexes.DOWN_ODD).add(Hexes.LEFT), new Robot(),
+                        Hexes.UP.add(Hexes.RIGHT).add(Hexes.UP), new Robot()
+                )), new RobotPosition<>(Hexes.LEFT)
+        );
+
+
+
+        return grid;
+    }
+
 
 }
