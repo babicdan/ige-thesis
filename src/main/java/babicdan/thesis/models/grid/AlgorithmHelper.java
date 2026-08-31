@@ -763,7 +763,7 @@ public class AlgorithmHelper {
         var beacon2 = new HexCoordinate(-1,2,false);
         var beacon3 = new HexCoordinate(-3,1,true);
         var beacon4 = new HexCoordinate(-3,-1,true);
-        var beacon5 = new HexCoordinate(0,-3,true);
+        var beacon5 = new HexCoordinate(0,-3,false);
         var beacon6 = new HexCoordinate(1,-2,true);
 
         for(var r : List.of(front, middle, back, beacon1, beacon2, beacon3, beacon4, beacon5, beacon6))
