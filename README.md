@@ -20,7 +20,8 @@ Visibility ranges are listed first, as they are not clear from the visualization
 2) $`\mathcal{A}^▲_2`$, visibility range one, uses six robots of two colors
 3) $`\mathcal{A}^▲_3`$, visibility range one, uses five robots of three colors
 4) $`\mathcal{A}^⬣_1`$, visibility range two, uses five robots of three colors 
-5) Moving group in the hexagonal grid under visibility range one. Uses six robots of three colors
+5) $`\mathcal{A}^⬣_2`$, visibility range three, uses nine robots of a single color
+6) $`\mathcal{A}^⬣_3`$, visibility range one, uses twelve robots of four colors
 
 
 ## Controls

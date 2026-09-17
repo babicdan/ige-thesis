@@ -93,12 +93,12 @@ public class IGEApp extends Application {
                         grid = triGrid;
                         inUse = GridType.TRIANGLE;
                     }
-                    case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> {
+                    case KeyCode.DIGIT6, KeyCode.NUMPAD6 -> {
                         hexGrid = AlgorithmHelper.hexMovingGroup();
                         grid = hexGrid;
                         inUse = GridType.HEXAGON;
                     }
-                    case KeyCode.DIGIT6, KeyCode.NUMPAD6 -> {
+                    case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> {
                         hexGrid = AlgorithmHelper.hexDemoOne();
                         grid = hexGrid;
                         inUse = GridType.HEXAGON;
@@ -128,12 +128,12 @@ public class IGEApp extends Application {
                         inUse = GridType.HEXAGON;
                     }
                     case KeyCode.DIGIT5, KeyCode.NUMPAD5 -> {
-                        hexGrid = AlgorithmHelper.algoHexTwo();
+                        hexGrid = AlgorithmHelper.algoHexThree();
                         grid = hexGrid;
                         inUse = GridType.HEXAGON;
                     }
                     case KeyCode.DIGIT6, KeyCode.NUMPAD6 -> {
-                        hexGrid = AlgorithmHelper.algoHexThree();
+                        hexGrid = AlgorithmHelper.algoHexTwo();
                         grid = hexGrid;
                         inUse = GridType.HEXAGON;
                     }
